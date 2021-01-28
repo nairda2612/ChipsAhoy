@@ -1,0 +1,157 @@
+#! /bin/bash
+
+## Help message when no parameter is provide.
+if [ $# -eq 0 ]
+then
+   echo "Usage: chipsahoy  <params_file>"
+   echo ""
+   echo "params.file: Input file with the parameters"
+   echo "an example of input file can be found in the test folder"
+   exit
+elif [ $# -gt 1 ]
+then
+   echo "FATAL ERROR!!!! I'm just joking son, you just entered more than one parameter"
+   exit
+fi
+
+## Reading in parameter file:
+PARAMS=$1
+
+echo ""
+echo "======================"
+echo "| LOADING PARAMETERS |"
+echo "======================"
+echo ""
+
+INSDIR=$(grep installation_directory: $PARAMS | awk '{ print $2 }')
+echo "Installation directory = $INSDIR"
+WD=$(grep working_directory: $PARAMS | awk '{ print $2 }')
+echo "Working directory = $WD"
+EXP=$(grep experiment_name: $PARAMS | awk '{ print $2 }')
+echo "Experiment name = $EXP"
+NUMCHIP=$(grep number_chip: $PARAMS | awk  '{ print $2 }')
+echo "Number of chip samples = $NUMCHIP"
+NUMINPUT=$(grep number_input: $PARAMS | awk '{ print $2 }')
+echo "Number of input samples = $NUMINPUT"
+GENOME=$(grep path_genome: $PARAMS | awk '{ print $2 }')
+echo "Reference genome = $GENOME"
+ANNOT=$(grep path_annotation: $PARAMS | awk '{ print $2 }')
+echo "Genome Annotation = $ANNOT"
+DESIGN=$(grep experimental_design: $PARAMS | awk '{ print $2}')
+echo "Experimental design = $DESIGN"
+
+
+i=0
+CHIP=()
+while [ $i -lt $NUMCHIP ]
+do
+   j=$(($i + 1))
+   CHIP[$i]=$(grep path_chip_$j: $PARAMS | awk '{ print $2 }')
+   ((i++))
+done
+
+echo "Chip samples = "
+echo ${CHIP[@]}
+
+
+i=0
+INPUT=()
+while [ $i -lt $NUMINPUT ]
+do
+   j=$(($i + 1))
+   INPUT[$i]=$(grep path_input_$j: $PARAMS | awk '{ print $2 }')
+   ((i++))
+done
+
+echo "Input samples = "
+echo ${INPUT[@]}
+
+echo "Parameters read!!"
+
+
+## Generating work space:
+echo ""
+echo "=========================="
+echo "| CREATING WORKING SPACE |"
+echo "=========================="
+echo ""
+
+cd $WD
+mkdir $EXP
+cd $EXP
+mkdir scripts genome annotation samples results
+cd genome
+cp $GENOME genome.fa
+cd ../annotation
+cp $ANNOT annotation.gtf
+
+#Generating reference genome index:
+cd ../genome
+bowtie2-build genome.fa index
+
+echo "Index done!!"
+
+cd ../samples
+mkdir chip input
+cd chip
+
+i=1
+while [ $i -le $NUMCHIP ]
+do
+   mkdir chip_sample_$i
+   cd  chip_sample_$i
+   j=$(($i - 1))
+   cp ${CHIP[$j]} chip_$i.fq.gz
+   cd ..
+   ((i++))
+done
+
+cd ../input
+
+i=1
+while [ $i -le $NUMINPUT ]
+do
+   mkdir input_sample_$i
+   cd input_sample_$i
+   j=$(($i - 1))
+   cp ${INPUT[$j]} input_$i.fq.gz
+   cd ..
+   ((i++))
+done
+
+echo "Samples charged!!"
+
+cd ../../results
+
+#Processing Chip samples:
+i=1
+while [ $i -le $NUMCHIP ]
+do
+   bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $i $NUMCHIP $INSDIR chip_$i | tee chip_$i 
+   ((i++))
+done
+
+#Processing Input samples:
+
+i=1
+while [ $i -le $NUMINPUT ]
+do
+   bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/input/input_sample_$i $i $NUMINPUT $INSDIR input_$i | tee input_$i
+   ((i++))
+done
+
+
+echo "Individual samples have been correctly processed bro!!"
+
+#Peak calling samples:
+
+i=1
+while [ $i -le $NUMINPUT ]
+do
+   macs2 callpeak -t ../samples/chip/chip_sample_$i/chip_$i.bam -c ../samples/input/input_sample_$i/input_$i.bam -f BAM --outdir . -n $EXP_$i
+   ((i++))
+done
+
+echo "Peaks calling done!"
+
+

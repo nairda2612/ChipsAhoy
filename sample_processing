@@ -24,6 +24,7 @@ gzip -d $SAMPLENAME.fq.gz
 # Mapping reads to reference genome
 bowtie2 -x ../../../genome/index -U $SAMPLENAME.fq -S $SAMPLENAME.sam
 samtools sort -o $SAMPLENAME.bam $SAMPLENAME.sam
+rm $SAMPLENAME.sam
 samtools index $SAMPLENAME.bam
 
 ## Write on mapping file
@@ -39,5 +40,4 @@ echo "Overall alignment = $OVALIGN" >> ../../../results/mapping_file
 ##then
    #IGV
 ##fi
-
 
