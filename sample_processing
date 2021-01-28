@@ -1,0 +1,43 @@
+#! /bin/bash
+
+##Parameters:
+SAMPLE_DIR=$1
+i=$2
+NUMSAMPLES=$3
+INSDIR=$4
+SAMPLENAME=$5
+
+echo ""
+echo "======================="
+echo "|PROCESSING SAMPLE $i |" 
+echo "======================="
+echo ""
+
+cd ${SAMPLE_DIR}
+
+# Quality control
+
+fastqc $SAMPLENAME.fq.gz
+
+gzip -d $SAMPLENAME.fq.gz 
+
+# Mapping reads to reference genome
+bowtie2 -x ../../../genome/index -U $SAMPLENAME.fq -S $SAMPLENAME.sam
+samtools sort -o $SAMPLENAME.bam $SAMPLENAME.sam
+samtools index $SAMPLENAME.bam
+
+## Write on mapping file
+echo "$SAMPLENAME:" >> ../../../results/mapping_file
+
+READS=$(grep reads ../../../results/$SAMPLENAME | awk '{ print $1 }')
+echo "Number of reads = $READS" >> ../../../results/mapping_file
+
+OVALIGN=$(grep overall ../../../results/$SAMPLENAME | awk '{ print $1 }')
+echo "Overall alignment = $OVALIGN" >> ../../../results/mapping_file
+
+##if [ $NUM_PROC -eq $NUMSAMPLES ]
+##then
+   #IGV
+##fi
+
+
