@@ -8,9 +8,9 @@ INSDIR=$4
 SAMPLENAME=$5
 
 echo ""
-echo "======================="
-echo "|PROCESSING SAMPLE $i |" 
-echo "======================="
+echo "========================="
+echo "|PROCESSING $SAMPLENAME |" 
+echo "========================="
 echo ""
 
 cd ${SAMPLE_DIR}
@@ -22,19 +22,20 @@ fastqc $SAMPLENAME.fq.gz
 gzip -d $SAMPLENAME.fq.gz 
 
 # Mapping reads to reference genome
-bowtie2 -x ../../../genome/index -U $SAMPLENAME.fq -S $SAMPLENAME.sam
+bowtie2 -x ../../../genome/index -U $SAMPLENAME.fq -S $SAMPLENAME.sam 2> mapping_file.txt
+mv mapping_file.txt ../../../results
 samtools sort -o $SAMPLENAME.bam $SAMPLENAME.sam
 rm $SAMPLENAME.sam
 samtools index $SAMPLENAME.bam
 
 ## Write on mapping file
-echo "$SAMPLENAME:" >> ../../../results/mapping_file
+echo "$SAMPLENAME:" >> ../../../results/mapping_values
 
-READS=$(grep reads ../../../results/$SAMPLENAME | awk '{ print $1 }')
-echo "Number of reads = $READS" >> ../../../results/mapping_file
+READS=$(grep reads ../../../results/mapping_file.txt | awk '{ print $1 }')
+echo "Number of reads ="$READS >> ../../../results/mapping_values
 
-OVALIGN=$(grep overall ../../../results/$SAMPLENAME | awk '{ print $1 }')
-echo "Overall alignment = $OVALIGN" >> ../../../results/mapping_file
+OVALIGN=$(grep overall ../../../results/mapping_file.txt | awk '{ print $1 }')
+echo "Overall alignment ="$OVALIGN >> ../../../results/mapping_values
 
 ##if [ $NUM_PROC -eq $NUMSAMPLES ]
 ##then

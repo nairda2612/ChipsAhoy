@@ -127,7 +127,7 @@ cd ../../results
 i=1
 while [ $i -le $NUMCHIP ]
 do
-   bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $i $NUMCHIP $INSDIR chip_$i | tee chip_$i 
+   bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $i $NUMCHIP $INSDIR chip_$i 
    ((i++))
 done
 
@@ -136,7 +136,7 @@ done
 i=1
 while [ $i -le $NUMINPUT ]
 do
-   bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/input/input_sample_$i $i $NUMINPUT $INSDIR input_$i | tee input_$i
+   bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/input/input_sample_$i $i $NUMINPUT $INSDIR input_$i
    ((i++))
 done
 
