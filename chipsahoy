@@ -148,10 +148,22 @@ echo "Individual samples have been correctly processed bro!!"
 i=1
 while [ $i -le $NUMINPUT ]
 do
-   macs2 callpeak -t ../samples/chip/chip_sample_$i/chip_$i.bam -c ../samples/input/input_sample_$i/input_$i.bam -f BAM --outdir . -n $EXP_$i
+   macs2 callpeak -t ../samples/chip/chip_sample_$i/chip_$i.bam -c ../samples/input/input_sample_$i/input_$i.bam -f BAM --outdir . -n $EXP$i
    ((i++))
 done
 
 echo "Peaks calling done!"
 
+# Regulome determination
 
+cd
+cd $INSDIR
+cp peaks_script.R peaks_$EXP.R
+cd
+mv $INSDIR/peaks_$EXP.R $WD/results
+
+NARROWPEAK=$(ls *.narrowPeak)
+SUMMITSBED=$(ls *summits.bed)
+
+cd $WD/results
+Rscript peaks_$EXP.R $NARROWPEAK $SUMMITSBED --verbose
