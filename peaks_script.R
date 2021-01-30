@@ -13,32 +13,43 @@ narrow_peak <- arguments[2] #Peaks file
 summit_peak <- arguments[3] #Summits file
 # posible argumento para up y down stream COMENTAR
 annoDb_name <- arguments[4] #Anotación de AT
+print(annoDb_name)
 annoDb_param <- arguments[5]
+print("===============================")
 up1 <- as.numeric(arguments[6])
+print(up1)
 down1 <- as.numeric(arguments[7])
 up2 <- as.numeric(arguments[8])
 down2 <- as.numeric(arguments[9])
 maintitle <- as.numeric(arguments[10])
 
-
+print("===============================")
+print(annoDb_name)
 ## Installing packages:
 
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#  install.packages("BiocManager")
 
-if (!require("ChIPseeker")) BiocManager::install("ChIPseeker")
+#if (!require("ChIPseeker")) BiocManager::install("ChIPseeker")
 library("ChIPseeker")
 
+print("===============================")
+print(annoDb_name)
 # paketes de organismos concretos
 
-if (!require(txdb)) BiocManager::install(txdb)
+#if (!require(txdb)) BiocManager::install(txdb)
 library(txdb, character.only= TRUE)
 
-if (!require("clusterProfiler")) BiocManager::install("clusterProfiler")
+print("===============================")
+print(annoDb_name)
+#if (!require("clusterProfiler")) BiocManager::install("clusterProfiler")
 library("clusterProfiler")
 
-if (!require(annoDb_name)) BiocManager::install(annoDb_name)
-library(annoDb_name, character.only= TRUE)
+print("===============================")
+print(annoDb_name)
+
+#if (!require(annoDb_name)) BiocManager::install(annoDb_name)
+library(annoDb_name)
 
 
 ## Getting information from organism 
