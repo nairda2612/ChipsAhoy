@@ -22,7 +22,17 @@ fastqc $SAMPLENAME.fq.gz
 gzip -d $SAMPLENAME.fq.gz 
 
 # Mapping reads to reference genome
-bowtie2 -x ../../../genome/index -U $SAMPLENAME.fq -S $SAMPLENAME.sam 2> mapping_file.txt
+bowtie2 -x ../../../genome/index -U $SAMPLENAME.fq -S $SAMPLENAME.sam 2> mapping_file.txt & PID=$!
+
+echo "Wait, principal Faragonda is managing the situation..."
+printf "["
+# While process is running...
+while kill -0 $PID 2> /dev/null; do
+    printf  "⚡"
+    sleep 1
+done
+printf "] Finiquitao, maravillosa gestión de la Directora Faragonda !"
+
 mv mapping_file.txt ../../../results
 samtools sort -o $SAMPLENAME.bam $SAMPLENAME.sam
 rm $SAMPLENAME.sam
@@ -41,4 +51,5 @@ echo "Overall alignment ="$OVALIGN >> ../../../results/mapping_values
 ##then
    #IGV
 ##fi
+
 
