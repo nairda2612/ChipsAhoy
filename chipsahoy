@@ -40,6 +40,21 @@ echo "Genome Annotation = $ANNOT"
 DESIGN=$(grep experimental_design: $PARAMS | awk '{ print $2}')
 echo "Experimental design = $DESIGN"
 
+TXDB=$(grep txdb_param: $PARAMS | awk '{ print $2 }')
+echo "txdb_param= $TXDB"
+ANNN=$(grep annoDb_name: $PARAMS | awk '{ print $2}')
+echo "annoDb_param = $ANNN"
+ANNP=$(grep annoDb_param: $PARAMS | awk '{ print $2}')
+echo "annoDb_param = $ANNP"
+UP1=$(grep up1: $PARAMS | awk '{ print $2}')
+echo "up1 = $UP1"
+DOWN1=$(grep down1: $PARAMS | awk '{ print $2}')
+echo "down1 = $DOWN1"
+UP2=$(grep up2: $PARAMS | awk '{ print $2}')
+echo "up1 = $UP2"
+DOWN2=$(grep down2: $PARAMS | awk '{ print $2}')
+echo "down1 = $DOWN2"
+
 
 i=0
 CHIP=()
@@ -157,13 +172,19 @@ echo "Peaks calling done!"
 # Regulome determination
 
 cd
-cd $INSDIR
-cp peaks_script.R peaks_$EXP.R
-cd
-mv $INSDIR/peaks_$EXP.R $WD/results
+cp $INSDIR/ChipsAhoy/peaks_script.R $WD/$EXP/results
+
+cd $WD/$EXP/results
 
 NARROWPEAK=$(ls *.narrowPeak)
 SUMMITSBED=$(ls *summits.bed)
+NNARROWPEAK=${#NARROWPEAK[@]}
+NSUMMITSBED=${#SUMMITSBED[@]}
 
-cd $WD/results
-Rscript peaks_$EXP.R $NARROWPEAK $SUMMITSBED --verbose
+i=1
+while [ $i -le $NNARROWPEAK ]
+do
+   Rscript peaks_script.R $TXDB ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $ANNN $ANNP $UP1 $DOWN1 $UP2 $DOWN2 grafiquitosuhuhuu --verbose
+   ((i++))
+done
+
