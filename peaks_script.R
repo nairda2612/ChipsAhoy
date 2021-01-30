@@ -32,13 +32,13 @@ library("ChIPseeker")
 # paketes de organismos concretos
 
 if (!require(txdb)) BiocManager::install(txdb)
-library(txdb)
+library(txdb, character.only= TRUE)
 
 if (!require("clusterProfiler")) BiocManager::install("clusterProfiler")
 library("clusterProfiler")
 
 if (!require(annoDb_name)) BiocManager::install(annoDb_name)
-library(annoDb_name)
+library(annoDb_name, character.only= TRUE)
 
 
 ## Getting information from organism 

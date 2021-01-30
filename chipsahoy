@@ -181,10 +181,19 @@ SUMMITSBED=$(ls *summits.bed)
 NNARROWPEAK=${#NARROWPEAK[@]}
 NSUMMITSBED=${#SUMMITSBED[@]}
 
-i=1
-while [ $i -le $NNARROWPEAK ]
+#i=1
+#while [ $i -le $NNARROWPEAK ]
+#do
+   #Rscript peaks_script.R $TXDB ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $ANNN $ANNP $UP1 $DOWN1 $UP2 $DOWN2 grafiquitosuhuhuu --verbose
+   #((i++))
+#done
+
+## Homer analysis.
+
+i=0
+while [ $i -le $NSUMMITSBED ]
 do
-   Rscript peaks_script.R $TXDB ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $ANNN $ANNP $UP1 $DOWN1 $UP2 $DOWN2 grafiquitosuhuhuu --verbose
+   findMotifsGenome.pl ${SUMMITSBED[$i]} ../genome/genome.fa find_motifs -len 8 -size 100
    ((i++))
 done
 
