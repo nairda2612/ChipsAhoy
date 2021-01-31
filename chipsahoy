@@ -40,12 +40,6 @@ echo "Genome Annotation = $ANNOT"
 DESIGN=$(grep experimental_design: $PARAMS | awk '{ print $2}')
 echo "Experimental design = $DESIGN"
 
-TXDB=$(grep txdb_param: $PARAMS | awk '{ print $2 }')
-echo "txdb_param= $TXDB"
-ANNN=$(grep annoDb_name: $PARAMS | awk '{ print $2}')
-echo "annoDb_name = $ANNN"
-ANNP=$(grep annoDb_param: $PARAMS | awk '{ print $2}')
-echo "annoDb_param = $ANNP"
 UP1=$(grep up1: $PARAMS | awk '{ print $2}')
 echo "up1 = $UP1"
 DOWN1=$(grep down1: $PARAMS | awk '{ print $2}')
@@ -184,19 +178,16 @@ NSUMMITSBED=${#SUMMITSBED[@]}
 i=0
 while [ $i -le $NNARROWPEAK ]
 do
-   echo "$ANNN"
-   echo "==============================="
-   echo "$UP1"
-   Rscript peaks_script.R $TXDB ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $ANNN $ANNP $UP1 $DOWN1 $UP2 $DOWN2 grafiquitosuhuhuu --verbose
+   Rscript peaks_script.R ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $UP1 $DOWN1 $UP2 $DOWN2 grafiquitosuhuhuu --verbose
    ((i++))
 done
 
 ## Homer analysis.
 
-#i=0
-#while [ $i -le $NSUMMITSBED ]
-#do
- #  findMotifsGenome.pl ${SUMMITSBED[$i]} ../genome/genome.fa find_motifs -len 8 -size 100
- #  ((i++))
-#done
+i=0
+while [ $i -le $NSUMMITSBED ]
+do
+  findMotifsGenome.pl ${SUMMITSBED[$i]} ../genome/genome.fa find_motifs -len 8 -size 100
+  ((i++))
+done
 

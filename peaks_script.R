@@ -8,23 +8,15 @@
 # Arguments:
 arguments <- commandArgs(trailingOnly = TRUE)
 
-txdb <- arguments[1] #Total genes of AT
-narrow_peak <- arguments[2] #Peaks file
-summit_peak <- arguments[3] #Summits file
+narrow_peak <- arguments[1] #Peaks file
+summits_bed <- arguments[2] #Summits file
 # posible argumento para up y down stream COMENTAR
-annoDb_name <- arguments[4] #Anotaci�n de AT
-print(annoDb_name)
-annoDb_param <- arguments[5]
-print("===============================")
-up1 <- as.numeric(arguments[6])
-print(up1)
-down1 <- as.numeric(arguments[7])
-up2 <- as.numeric(arguments[8])
-down2 <- as.numeric(arguments[9])
-maintitle <- as.numeric(arguments[10])
+up1 <- as.numeric(arguments[3])
+down1 <- as.numeric(arguments[4])
+up2 <- as.numeric(arguments[5])
+down2 <- as.numeric(arguments[6])
+maintitle <-(arguments[7])
 
-print("===============================")
-print(annoDb_name)
 ## Installing packages:
 
 #if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -33,34 +25,22 @@ print(annoDb_name)
 #if (!require("ChIPseeker")) BiocManager::install("ChIPseeker")
 library("ChIPseeker")
 
-print("===============================")
-print(annoDb_name)
 # paketes de organismos concretos
 
 #if (!require(txdb)) BiocManager::install(txdb)
-library(txdb, character.only= TRUE)
-
-print("===============================")
-print(annoDb_name)
-#if (!require("clusterProfiler")) BiocManager::install("clusterProfiler")
-library("clusterProfiler")
-
-print("===============================")
-print(annoDb_name)
+library("TxDb.Athaliana.BioMart.plantsmart28")
+txdb <- TxDb.Athaliana.BioMart.plantsmart28
 
 #if (!require(annoDb_name)) BiocManager::install(annoDb_name)
-library(annoDb_name)
+library("org.At.tair.db")
 
-
-## Getting information from organism 
-
-####txdb <- TxDb.Athaliana.BioMart.plantsmart28
+#if (!require("clusterProfiler")) BiocManager::install("clusterProfiler")
+library("clusterProfiler")
 
 ## Getting genetic information from organism
 
 genes.atha <- as.data.frame(genes(txdb))
 head(genes.atha)
-
 
 ## La primera columna es el cromosoma donde se encuentra cada gen, PONER ENGLISH
 ## y en este caso nos interesa solo el del cromosoma 1, que sera
@@ -79,7 +59,7 @@ peak
 #ACORDARSE QUE LOS NARROW IBAN EN COMILLA EN LOS ARGUMENTOS
 ## Reading summits, maximo de los picos
 
-peak2 <- readPeakFile(peakfile = summit_peak)
+peak2 <- readPeakFile(peakfile = summits_bed)
 peak2 
 #ACORDARSE QUE LOS SUMMIT IBAN EN COMILLA EN LOS ARGUMENTOS
 
@@ -88,7 +68,7 @@ peak2
 
 ## Peak localization
 
-covplot(peak, weightCol="X211")
+covplot(peak, weightCol="V5")
 
 ## Defining promoters
 
@@ -104,11 +84,11 @@ Promoters_peak2 <- getPromoters(TxDb=txdb, upstream=up2, downstream=down2)
 #peakAnno_peak <- annotatePeak(peak = peak, tssRegion = c(-1000,0), TxDb = txdb, annoDb = "org.At.tair.db" )
 #plotAnnoPie(peakAnno)
 
-peakAnno_peak2 <- annotatePeak(peak = peak2, tssRegion = c(-up2,down2), TxDb = txdb, annoDb = annoDb_name)
-plotAnnoPie(peakAnno)
+peakAnno_peak2 <- annotatePeak(peak = peak2, tssRegion = c(-up2,down2), TxDb = txdb, annoDb = "org.At.tair.db")
+plotAnnoPie(peakAnno_peak2)
+# guardar en el futuro
 
-
-df.annotation <- as.data.frame(peakAnno_peak)
+df.annotation <- as.data.frame(peakAnno_peak2)
 head(df.annotation)
 
 ## En la columna de anotación del df.annotation, te indica con qué
@@ -134,7 +114,7 @@ length(prr5.regulome)
 
 ego <- enrichGO(gene          = prr5.regulome,
                 universe      = my.universe,
-                OrgDb         = annoDb_param,
+                OrgDb         = org.At.tair.db,
                 ont           = "BP",
                 keyType = 'TAIR')
 head(ego)
@@ -147,18 +127,11 @@ head(ego)
 #Abro un canal para generar el archivo png
 
 
-png(file=maintitle[1],
-    width     = 10,
-    height    = 10,
-    units     = "in",
-    res       = 600
-)
 
 ## Genero la imagen 
 
 barplot(ego, showCategory=20)
 ##Cierro el canal
-dev.off()
 
 
 
@@ -167,54 +140,29 @@ dev.off()
 ## germinacion tras incendio es dependiente del reloj circadiano y 
 ## especificamente de prr5.
 
-png(file=maintitle,
-    width     = 10,
-    height    = 10,
-    units     = "in",
-    res       = 600
-)
-
 ## Genero la imagen 
 
 dotplot(ego)
 ##Cierro el canal
-dev.off()
+
 
 
 ## A el le gusta el siguiente, que es una red de concepto. Une genes
 ## a terminos de GO
 
-png(file=maintitle,
-    width     = 10,
-    height    = 10,
-    units     = "in",
-    res       = 600
-)
-
 ## Genero la imagen 
 
 cnetplot(ego)
-##Cierro el canal
-dev.off()
-
-
-
 
 ## Tb esta bien porque dice que prr5 esta involucrado en desarrollo de
 ## organos (a mi no me sale) y en respuestas a falta de agua, sust org,
 ## y luego de forma aislada a carriquina y frio
-png(file=maintitle,
-    width     = 10,
-    height    = 10,
-    units     = "in",
-    res       = 600
-)
 
 ## Genero la imagen 
 
 emapplot(ego)
 ##Cierro el canal
-dev.off()
+
 
 
 
