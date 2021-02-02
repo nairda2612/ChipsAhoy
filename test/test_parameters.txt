@@ -7,7 +7,7 @@ path_genome: /home/andfervel/prueba/genome.fa
 path_annotation: /home/andfervel/prueba/annotation.gtf
 number_TF: 1
 number_control: 1
-path_chip_1: /home/andfervel/prueba/SRR3418106_1.fastq /home/andfervel/prueba/SRR3418108_1.fastq   
+path_chip_1: /home/andfervel/prueba/SRR3418106_1.fastq /home/andfervel/prueba/SRR3418108_1.fastq 
 path_control_1: /home/andfervel/prueba/SRR3418152_1.fastq /home/andfervel/prueba/SRR3418153_1.fastq
 up1: 1000
 down1: 0

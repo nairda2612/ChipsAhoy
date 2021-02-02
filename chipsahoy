@@ -57,24 +57,35 @@ i=1
 CHIP=()
 while [ $i -le $NUMTF ]
 do
-   CHIP+=(grep path_chip_$i: $PARAMS | awk '{ for k=2; k<=$NUMREPFT+1; k++) print $k }')
+   CHIP+=$(grep path_chip_$i: $PARAMS | awk '{for (k=2; k<=NF; k++) print $k}')
    ((i++))
 done
 
 echo "Chip samples = "
 echo ${CHIP[@]}
+echo LENGTH=${#CHIP[@]}
+
+
+IFS=" "; read -ra CHIP <<< "$CHIP"
+echo ${CHIP[@]}
 
 
 i=1
+j=0
 CONTROL=()
 while [ $i -le $NUMCONTROL ]
 do
-   CONTROL+=(grep path_control_$i: $PARAMS | awk '{for (k=2; k<=($NUMREPCON + 1); k++) print $k}')
+   CONTROL[$j]=$(grep path_control_$i: $PARAMS | awk '{for (k=2; k<=NF; k++) print $k}')
+   ((j++))
    ((i++))
 done
 
 echo "Control samples = "
 echo ${CONTROL[@]}
+
+IFS=" "; read -ra CONTROL <<< "$CONTROL"
+
+echo LENGTH=${#CONTROL[@]}
 
 echo "Parameters read!!"
 
@@ -97,7 +108,7 @@ cp $ANNOT annotation.gtf
 
 #Generating reference genome index:
 cd ../genome
-bowtie2-build genome.fa index
+#bowtie2-build genome.fa index
 
 echo "Index done!!"
 
@@ -107,13 +118,17 @@ cd chip
 
 i=1
 k=0
-while [ $i -le $NUMFT ]
+while [ $i -le $NUMTF ]
 do
    mkdir chip_sample_$i
    cd  chip_sample_$i
    j=1
-   while [ $j -le $NUMREPTF]
+   while [ $j -le $NUMREPTF ]
    do
+   echo ${CHIP[$k]}
+   echo "==========="
+   echo LENGTH=${#CHIP[@]}
+
      cp ${CHIP[$k]} chip_$i$j.fq.gz
      ((k++))
      ((j++))
@@ -131,7 +146,7 @@ do
    mkdir control_sample_$i
    cd control_sample_$i
    j=1
-   while [ $j -le $NUMREPCON]
+   while [ $j -le $NUMREPCON ]
    do
      cp ${CONTROL[$k]} control_$i$j.fq.gz
      ((k++))

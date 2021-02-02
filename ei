@@ -2,11 +2,29 @@
 
 i=1
 CHIP=()
-while [ $i -le 5 ]
+while [ $i -le 2 ]
 do
-   CHIP+=("hola")
+   CHIP+=$(grep path_chip_$i: test/test_parameters.txt | awk '{for (k=2; k<=NF; k++) printf $k " "}')
    ((i++))
 done
 
-echo "Chip samples = "
+echo "Array inicial"
 echo ${CHIP[@]}
+echo LENGTH=${#CHIP[@]}
+
+string="$CHIP"
+echo "Cadena generada"
+echo $string
+
+read -a CHIP <<< $string
+
+
+echo "Chip samples = q es array roto y su longitud"
+echo ${CHIP[@]}
+echo ${#CHIP[@]}
+
+if [[ "$(declare -p CHIP)" =~ "declare -a" ]]; then
+    echo array
+else
+    echo no array
+fi
