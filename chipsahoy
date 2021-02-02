@@ -43,21 +43,21 @@ ANNOT=$(grep path_annotation: $PARAMS | awk '{ print $2 }')
 echo "Genome Annotation = $ANNOT"
 
 
-UP1=$(grep up1: $PARAMS | awk '{ print $2}')
+UP1=$(grep up1: $PARAMS | awk '{ print $2 }')
 echo "up1 = $UP1"
-DOWN1=$(grep down1: $PARAMS | awk '{ print $2}')
+DOWN1=$(grep down1: $PARAMS | awk '{ print $2 }')
 echo "down1 = $DOWN1"
-UP2=$(grep up2: $PARAMS | awk '{ print $2}')
+UP2=$(grep up2: $PARAMS | awk '{ print $2 }')
 echo "up1 = $UP2"
-DOWN2=$(grep down2: $PARAMS | awk '{ print $2}')
+DOWN2=$(grep down2: $PARAMS | awk '{ print $2 }')
 echo "down1 = $DOWN2"
 
 
-i=0
+i=1
 CHIP=()
-while [ $i -lt $NUMTF ]
+while [ $i -le $NUMTF ]
 do
-   CHIP[$i]=$(grep path_chip_$i: $PARAMS | awk '{ for(k=2;k<=$NUMREPTF;k++) print $k }')
+   CHIP+=(grep path_chip_$i: $PARAMS | awk '{ for k=2; k<=$NUMREPFT+1; k++) print $k }')
    ((i++))
 done
 
@@ -65,12 +65,11 @@ echo "Chip samples = "
 echo ${CHIP[@]}
 
 
-i=0
+i=1
 CONTROL=()
-while [ $i -lt $NUMCONTROL ]
+while [ $i -le $NUMCONTROL ]
 do
-   j=$(($i + 1))
-   CONTROL[$i]=$(grep path_control_$i: $PARAMS | awk '{ for(k=2;k<=$NUMREPCON;k++) print $k }')
+   CONTROL+=(grep path_control_$i: $PARAMS | awk '{for (k=2; k<=($NUMREPCON + 1); k++) print $k}')
    ((i++))
 done
 

@@ -1,0 +1,12 @@
+#! /bin/bash
+
+i=1
+CHIP=()
+while [ $i -le 5 ]
+do
+   CHIP+=("hola")
+   ((i++))
+done
+
+echo "Chip samples = "
+echo ${CHIP[@]}
