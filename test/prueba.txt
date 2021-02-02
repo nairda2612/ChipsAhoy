@@ -1,0 +1,15 @@
+installation_directory: /home/emma/github_repos
+working_directory: /home/emma/tmp
+experiment_name: prueba_experiment
+path_genome: /home/emma/prr5/chromosome1.fa
+path_annotation: /home/emma/prr5/chromosome1.gtf
+number_chip: 1
+number_input: 1
+number_samples: 2
+path_chip_1: /home/emma/prr5/chip_prr5_chr1.fq.gz
+path_input_1: /home/emma/prr5/input_prr5_chr1.fq.gz
+up1: 1000
+down1: 0
+up2: 1000
+down2: 1000
+

@@ -2,10 +2,8 @@
 
 ##Parameters:
 SAMPLE_DIR=$1
-i=$2
-NUMSAMPLES=$3
-INSDIR=$4
-SAMPLENAME=$5
+INSDIR=$2
+SAMPLENAME=$3
 
 echo ""
 echo "========================="
@@ -33,23 +31,19 @@ while kill -0 $PID 2> /dev/null; do
 done
 printf "] Finiquitao, maravillosa gestión de la Directora Faragonda !"
 
-mv mapping_file.txt ../../../results
 samtools sort -o $SAMPLENAME.bam $SAMPLENAME.sam
 rm $SAMPLENAME.sam
 samtools index $SAMPLENAME.bam
 
 ## Write on mapping file
-echo "$SAMPLENAME:" >> ../../../results/mapping_values
+mv mapping_file.txt ../../../results
+echo "$SAMPLENAME:" >> ../../../results/mapping_values.txt
 
 READS=$(grep reads ../../../results/mapping_file.txt | awk '{ print $1 }')
-echo "Number of reads ="$READS >> ../../../results/mapping_values
+echo "Number of reads ="$READS >> ../../../results/mapping_values.txt
 
 OVALIGN=$(grep overall ../../../results/mapping_file.txt | awk '{ print $1 }')
-echo "Overall alignment ="$OVALIGN >> ../../../results/mapping_values
+echo "Overall alignment ="$OVALIGN >> ../../../results/mapping_values.txt
 
-##if [ $NUM_PROC -eq $NUMSAMPLES ]
-##then
-   #IGV
-##fi
-
+rm mapping_file.txt
 

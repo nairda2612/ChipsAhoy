@@ -29,16 +29,19 @@ WD=$(grep working_directory: $PARAMS | awk '{ print $2 }')
 echo "Working directory = $WD"
 EXP=$(grep experiment_name: $PARAMS | awk '{ print $2 }')
 echo "Experiment name = $EXP"
-NUMCHIP=$(grep number_chip: $PARAMS | awk  '{ print $2 }')
-echo "Number of chip samples = $NUMCHIP"
-NUMINPUT=$(grep number_input: $PARAMS | awk '{ print $2 }')
-echo "Number of input samples = $NUMINPUT"
+NUMREPTF=$(grep number_rep_tf: $PARAMS | awk  '{ print $2 }')
+echo "Number of TF replicas = $NUMREPTF"
+NUMREPCON=$(grep number_rep_control: $PARAMS | awk  '{ print $2 }')
+echo "Number of control replicas = $NUMREPCON"
+NUMTF=$(grep number_TF: $PARAMS | awk  '{ print $2 }')
+echo "Number of TF samples = $NUMTF"
+NUMCONTROL=$(grep number_control: $PARAMS | awk '{ print $2 }')
+echo "Number of control samples = $NUMCONTROL"
 GENOME=$(grep path_genome: $PARAMS | awk '{ print $2 }')
 echo "Reference genome = $GENOME"
 ANNOT=$(grep path_annotation: $PARAMS | awk '{ print $2 }')
 echo "Genome Annotation = $ANNOT"
-DESIGN=$(grep experimental_design: $PARAMS | awk '{ print $2}')
-echo "Experimental design = $DESIGN"
+
 
 UP1=$(grep up1: $PARAMS | awk '{ print $2}')
 echo "up1 = $UP1"
@@ -52,10 +55,9 @@ echo "down1 = $DOWN2"
 
 i=0
 CHIP=()
-while [ $i -lt $NUMCHIP ]
+while [ $i -lt $NUMTF ]
 do
-   j=$(($i + 1))
-   CHIP[$i]=$(grep path_chip_$j: $PARAMS | awk '{ print $2 }')
+   CHIP[$i]=$(grep path_chip_$i: $PARAMS | awk '{ for(k=2;k<=$NUMREPTF;k++) print $k }')
    ((i++))
 done
 
@@ -64,16 +66,16 @@ echo ${CHIP[@]}
 
 
 i=0
-INPUT=()
-while [ $i -lt $NUMINPUT ]
+CONTROL=()
+while [ $i -lt $NUMCONTROL ]
 do
    j=$(($i + 1))
-   INPUT[$i]=$(grep path_input_$j: $PARAMS | awk '{ print $2 }')
+   CONTROL[$i]=$(grep path_control_$i: $PARAMS | awk '{ for(k=2;k<=$NUMREPCON;k++) print $k }')
    ((i++))
 done
 
-echo "Input samples = "
-echo ${INPUT[@]}
+echo "Control samples = "
+echo ${CONTROL[@]}
 
 echo "Parameters read!!"
 
@@ -101,31 +103,43 @@ bowtie2-build genome.fa index
 echo "Index done!!"
 
 cd ../samples
-mkdir chip input
+mkdir chip control
 cd chip
 
 i=1
-while [ $i -le $NUMCHIP ]
+k=0
+while [ $i -le $NUMFT ]
 do
    mkdir chip_sample_$i
    cd  chip_sample_$i
-   j=$(($i - 1))
-   cp ${CHIP[$j]} chip_$i.fq.gz
+   j=1
+   while [ $j -le $NUMREPTF]
+   do
+     cp ${CHIP[$k]} chip_$i$j.fq.gz
+     ((k++))
+     ((j++))
+   done
    cd ..
    ((i++))
 done
 
-cd ../input
+cd ../control
 
 i=1
-while [ $i -le $NUMINPUT ]
+k=0
+while [ $i -le $NUMCONTROL ]
 do
-   mkdir input_sample_$i
-   cd input_sample_$i
-   j=$(($i - 1))
-   cp ${INPUT[$j]} input_$i.fq.gz
+   mkdir control_sample_$i
+   cd control_sample_$i
+   j=1
+   while [ $j -le $NUMREPCON]
+   do
+     cp ${CONTROL[$k]} control_$i$j.fq.gz
+     ((k++))
+     ((j++))
+   done
    cd ..
-   ((i++))
+   ((i++)) 
 done
 
 echo "Samples charged!!"
@@ -134,18 +148,34 @@ cd ../../results
 
 #Processing Chip samples:
 i=1
-while [ $i -le $NUMCHIP ]
+while [ $i -le $NUMTF ]
 do
-   bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $i $NUMCHIP $INSDIR chip_$i 
+   j=1
+   while [ $j -le $NUMREPTF ] 
+   do 
+      bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR chip_$i$j
+      ((j++))
+   done
+   cd ../samples/chip/chip_sample_$i
+   BAMTF_$i=$(ls *.bam)
+   cd ../../../results
    ((i++))
 done
 
 #Processing Input samples:
 
 i=1
-while [ $i -le $NUMINPUT ]
+while [ $i -le $NUMCONTROL ]
 do
-   bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/input/input_sample_$i $i $NUMINPUT $INSDIR input_$i
+   j=1
+   while [ $j -le $NUMREPCON ]
+   do
+      bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR control_$i$j
+      ((j++))
+   done
+   cd ../samples/control/control_sample_$i
+   BAMCON_$i=$(ls *.bam)
+   cd ../../../results
    ((i++))
 done
 
@@ -155,9 +185,9 @@ echo "Individual samples have been correctly processed bro!!"
 #Peak calling samples:
 
 i=1
-while [ $i -le $NUMINPUT ]
+while [ $i -le $NUMTF ]
 do
-   macs2 callpeak -t ../samples/chip/chip_sample_$i/chip_$i.bam -c ../samples/input/input_sample_$i/input_$i.bam -f BAM --outdir . -n $EXP$i
+   macs2 callpeak -t ../samples/chip/chip_sample_$i/$BAMTF_$i -c ../samples/control/control_sample_$i/$BAMCON_$i -f BAM --outdir . -n $EXP$i
    ((i++))
 done
 
