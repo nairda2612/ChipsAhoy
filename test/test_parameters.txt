@@ -5,9 +5,10 @@ number_rep_tf: 2
 number_rep_control: 2
 path_genome: /home/emma/prueba/genome.fa
 path_annotation: /home/emma/prueba/annotation.gtf
-number_TF: 1
+number_TF: 2
 number_control: 1
 path_chip_1: /home/emma/prueba/SRR3418106_1.fastq /home/emma/prueba/SRR3418108_1.fastq 
+path_chip_2: /home/emma/prueba/SRR3418107_1.fastq /home/emma/prueba/SRR3418109_1.fastq
 path_control_1: /home/emma/prueba/SRR3418152_1.fastq /home/emma/prueba/SRR3418153_1.fastq
 up1: 1000
 down1: 0
