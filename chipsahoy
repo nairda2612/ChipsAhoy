@@ -57,35 +57,50 @@ i=1
 CHIP=()
 while [ $i -le $NUMTF ]
 do
-   CHIP+=$(grep path_chip_$i: $PARAMS | awk '{for (k=2; k<=NF; k++) print $k}')
+   CHIP+=$(grep path_chip_$i: $PARAMS | awk '{for (k=2; k<=NF; k++) printf $k " "}')
    ((i++))
 done
 
-echo "Chip samples = "
+
+echo "Initial Chip array = "
 echo ${CHIP[@]}
 echo LENGTH=${#CHIP[@]}
 
+string="$CHIP"
+echo "Passing array to string"
+echo "string"
 
-IFS=" "; read -ra CHIP <<< "$CHIP"
+echo "Breaking array"
+read -a CHIP <<< $string
+
+echo "Broken array"
 echo ${CHIP[@]}
-
+echo LENGTH=${#CHIP[@]}
 
 i=1
-j=0
 CONTROL=()
 while [ $i -le $NUMCONTROL ]
 do
-   CONTROL[$j]=$(grep path_control_$i: $PARAMS | awk '{for (k=2; k<=NF; k++) print $k}')
-   ((j++))
+   CONTROL+=$(grep path_control_$i: $PARAMS | awk '{for (k=2; k<=NF; k++) printf $k " "}')
    ((i++))
 done
 
-echo "Control samples = "
+
+echo "Initial Control array = "
 echo ${CONTROL[@]}
-
-IFS=" "; read -ra CONTROL <<< "$CONTROL"
-
 echo LENGTH=${#CONTROL[@]}
+
+string="$CONTROL"
+echo "Passing array to string"
+echo "string"
+
+echo "Breaking array"
+read -a CONTROL <<< $string
+
+echo "Broken array"
+echo ${CONTROL[@]}
+echo LENGTH=${#CONTROL[@]}
+
 
 echo "Parameters read!!"
 
@@ -108,7 +123,7 @@ cp $ANNOT annotation.gtf
 
 #Generating reference genome index:
 cd ../genome
-#bowtie2-build genome.fa index
+bowtie2-build genome.fa index
 
 echo "Index done!!"
 
@@ -125,11 +140,8 @@ do
    j=1
    while [ $j -le $NUMREPTF ]
    do
-   echo ${CHIP[$k]}
-   echo "==========="
-   echo LENGTH=${#CHIP[@]}
-
-     cp ${CHIP[$k]} chip_$i$j.fq.gz
+     cp ${CHIP[$k]} chip_$i$j
+     echo ${CHIP[$k]}
      ((k++))
      ((j++))
    done
@@ -148,7 +160,8 @@ do
    j=1
    while [ $j -le $NUMREPCON ]
    do
-     cp ${CONTROL[$k]} control_$i$j.fq.gz
+     cp ${CONTROL[$k]} control_$i$j
+     echo ${CONTROL[$k]}
      ((k++))
      ((j++))
    done

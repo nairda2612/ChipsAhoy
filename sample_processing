@@ -14,10 +14,10 @@ echo ""
 cd ${SAMPLE_DIR}
 
 # Quality control
+gzip -d $SAMPLENAME.fq 
 
 fastqc $SAMPLENAME.fq.gz
 
-gzip -d $SAMPLENAME.fq.gz 
 
 # Mapping reads to reference genome
 bowtie2 -x ../../../genome/index -U $SAMPLENAME.fq -S $SAMPLENAME.sam 2> mapping_file.txt & PID=$!
