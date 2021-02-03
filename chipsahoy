@@ -235,7 +235,7 @@ NSUMMITSBED=${#SUMMITSBED[@]}
 i=0
 while [ $i -le $NNARROWPEAK ]
 do
-   Rscript peaks_script.R ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $UP1 $DOWN1 $UP2 $DOWN2 grafiquitosuhuhuu --verbose
+   Rscript peaks_script.R ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $UP1 $DOWN1 $UP2 $DOWN2 --verbose
    ((i++))
 done
 
@@ -248,3 +248,7 @@ do
   ((i++))
 done
 
+cd
+cp $INSDIR/ChipsAhoy/chipsahoy $WD/$EXP/scripts
+cp $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/scripts
+cp $INSDIR/ChipsAhoy/peaks_script.R $WD/$EXP/scripts

@@ -14,13 +14,13 @@ echo ""
 cd ${SAMPLE_DIR}
 
 # Quality control
-gzip -d $SAMPLENAME.fq 
+gzip $SAMPLENAME
 
-fastqc $SAMPLENAME.fq.gz
+fastqc $SAMPLENAME.gz
 
 
 # Mapping reads to reference genome
-bowtie2 -x ../../../genome/index -U $SAMPLENAME.fq -S $SAMPLENAME.sam 2> mapping_file.txt & PID=$!
+bowtie2 -x ../../../genome/index -U $SAMPLENAME.gz -S $SAMPLENAME.sam 2> mapping_file.txt & PID=$!
 
 echo "Wait, principal Faragonda is managing the situation..."
 printf "["
