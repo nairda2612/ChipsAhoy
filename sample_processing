@@ -14,10 +14,8 @@ echo ""
 cd ${SAMPLE_DIR}
 
 # Quality control
-gzip $SAMPLENAME
 
 fastqc $SAMPLENAME.gz
-
 
 # Mapping reads to reference genome
 bowtie2 -x ../../../genome/index -U $SAMPLENAME.gz -S $SAMPLENAME.sam 2> mapping_file.txt & PID=$!
@@ -45,5 +43,5 @@ echo "Number of reads ="$READS >> ../../../results/mapping_values.txt
 OVALIGN=$(grep overall ../../../results/mapping_file.txt | awk '{ print $1 }')
 echo "Overall alignment ="$OVALIGN >> ../../../results/mapping_values.txt
 
-rm mapping_file.txt
+rm ../../../results/ mapping_file.txt
 

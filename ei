@@ -28,3 +28,34 @@ if [[ "$(declare -p CHIP)" =~ "declare -a" ]]; then
 else
     echo no array
 fi
+
+#BAMs:
+
+i=1
+BAMTF$i=()
+while [ $i -le 1 ]
+do
+   j=1
+   while [ $j -le 1 ]
+   do
+     BAMTF$i+=$(chip$i$j.bam)
+     ((j++))
+   done
+   ((i++))
+done
+
+i=1
+BAMCON$i=()
+while [ $i -le 1 ]
+do
+   j=2
+   while [ $j -le 2 ]
+   do
+     BAMCON$i+=$(chip$i$j.bam)
+     ((j++))
+   done
+   ((i++))
+done
+
+
+macs2 callpeak -t $BAMTF$i -c $BAMCON$i  -f BAM --outdir . -n $EXP$i
