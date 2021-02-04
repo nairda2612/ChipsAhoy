@@ -142,8 +142,6 @@ do
    do
      cp ${CHIP[$k]} chip_$i$j
      echo ${CHIP[$k]}
-     gzip chip_$i$j
-     echo "chip_$i$j zipped"
      ((k++))
      ((j++))
    done
@@ -164,8 +162,6 @@ do
    do
      cp ${CONTROL[$k]} control_$i$j
      echo ${CONTROL[$k]}
-     gzip control_$i$j
-     echo "control_$i$j zipped"
      ((k++))
      ((j++))
    done
@@ -187,10 +183,11 @@ do
       bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR chip_$i$j
       ((j++))
    done
+   cd ../samples/chip/chip_sample_$i
+   BAMTF$i+=$(ls *.bam)
    cd ../../../results
    ((i++))
 done
-
 
 #Processing Input samples:
 
@@ -203,6 +200,9 @@ do
       bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR control_$i$j
       ((j++))
    done
+   cd ../samples/control/control_sample_$i
+   BAMCON_$i=$(ls *.bam)
+   cd ../../../results
    ((i++))
 done
 
@@ -214,17 +214,7 @@ echo "Individual samples have been correctly processed bro!!"
 i=1
 while [ $i -le $NUMTF ]
 do
-   j=1
-   while [ $j -le $NUMCONTROL ]
-   do
-      cd ../samples/chip/chip_sample_$i
-      BAMTF=$(ls *bam)
-      cd ../../samples/control/control_sample_$j
-      BAMCON=$(ls *bam)
-      cd ../../../results
-      macs2 callpeak -t ../samples/chip/chip_sample_$i/$BAMTF -c ../samples/control/control_sample_$i/$BAMCON -f BAM --outdir . -n $EXP$i$j
-      ((j++))
-   done
+   macs2 callpeak -t ../samples/chip/chip_sample_$i/$BAMTF_$i -c ../samples/control/control_sample_$i/$BAMCON_$i -f BAM --outdir . -n $EXP$i
    ((i++))
 done
 

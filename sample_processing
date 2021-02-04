@@ -43,5 +43,5 @@ echo "Number of reads ="$READS >> ../../../results/mapping_values.txt
 OVALIGN=$(grep overall ../../../results/mapping_file.txt | awk '{ print $1 }')
 echo "Overall alignment ="$OVALIGN >> ../../../results/mapping_values.txt
 
-rm ../../../results/ mapping_file.txt
+rm ../../../results/mapping_file.txt
 
