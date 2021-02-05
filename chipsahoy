@@ -187,7 +187,6 @@ do
       bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR chip_$i$j
       ((j++))
    done
-   cd ../../../results
    ((i++))
 done
 
@@ -219,7 +218,7 @@ do
    do
       cd ../samples/chip/chip_sample_$i
       BAMTF=$(ls *bam)
-      cd ../../samples/control/control_sample_$j
+      cd ../../control/control_sample_$j
       BAMCON=$(ls *bam)
       cd ../../../results
       macs2 callpeak -t ../samples/chip/chip_sample_$i/$BAMTF -c ../samples/control/control_sample_$i/$BAMCON -f BAM --outdir . -n $EXP$i$j
