@@ -216,12 +216,7 @@ do
    j=1
    while [ $j -le $NUMCONTROL ]
    do
-      cd ../samples/chip/chip_sample_$i
-      BAMTF=$(ls *bam)
-      cd ../../control/control_sample_$j
-      BAMCON=$(ls *bam)
-      cd ../../../results
-      macs2 callpeak -t ../samples/chip/chip_sample_$i/$BAMTF -c ../samples/control/control_sample_$i/$BAMCON -f BAM --outdir . -n $EXP$i$j
+      macs2 callpeak -t ../samples/chip/chip_sample_$i/*bam -c ../samples/control/control_sample_$i/*bam -f BAM --outdir . -n $EXP$i$j
       ((j++))
    done
    ((i++))
@@ -233,25 +228,28 @@ echo "Peaks calling done!"
 
 cd
 cp $INSDIR/ChipsAhoy/peaks_script.R $WD/$EXP/results
-
 cd $WD/$EXP/results
 
-NARROWPEAK=$(ls *.narrowPeak)
-SUMMITSBED=$(ls *summits.bed)
-NNARROWPEAK=${#NARROWPEAK[@]}
-NSUMMITSBED=${#SUMMITSBED[@]}
+NARROWPEAK=()
+NARROWPEAK+=(*narrowPeak)
+SUMMITSBED=()
+SUMMITSBED+=(*summits.bed)
+
+NRESULTS=${#SUMMITSBED[@]}
 
 i=0
-while [ $i -le $NNARROWPEAK ]
+while [ $i -le $NRESULTS ]
 do
    Rscript peaks_script.R ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $UP1 $DOWN1 $UP2 $DOWN2 --verbose
    ((i++))
 done
 
-## Homer analysis.
+rm peaks_script.R
+
+##Homer analysis.
 
 i=0
-while [ $i -le $NSUMMITSBED ]
+while [ $i -le $NRESULTS ]
 do
   findMotifsGenome.pl ${SUMMITSBED[$i]} ../genome/genome.fa find_motifs -len 8 -size 100
   ((i++))
