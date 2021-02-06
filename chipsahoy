@@ -216,7 +216,7 @@ do
    j=1
    while [ $j -le $NUMCONTROL ]
    do
-      macs2 callpeak -t ../samples/chip/chip_sample_$i/*bam -c ../samples/control/control_sample_$i/*bam -f BAM --outdir . -n $EXP$i$j
+      macs2 callpeak -t ../samples/chip/chip_sample_$i/*bam -c ../samples/control/control_sample_$j/*bam -f BAM --outdir . -n $EXP$i$j
       ((j++))
    done
    ((i++))
@@ -251,7 +251,7 @@ rm peaks_script.R
 i=0
 while [ $i -le $NRESULTS ]
 do
-  findMotifsGenome.pl ${SUMMITSBED[$i]} ../genome/genome.fa find_motifs -len 8 -size 100
+  findMotifsGenome.pl ${SUMMITSBED[$i]} ../genome/genome.fa find_motifs$i -len 8 -size 100
   ((i++))
 done
 

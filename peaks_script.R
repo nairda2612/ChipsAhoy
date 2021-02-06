@@ -77,7 +77,7 @@ plotAnnoPie(peakAnno_summit)
 df.annotation_peak <- as.data.frame(peakAnno_peak)
 head(df.annotation_peak)
 
-df.annotation_peak <- as.data.frame(peakAnno_summit)
+df.annotation_summit <- as.data.frame(peakAnno_summit)
 head(df.annotation_summit)
 
 
@@ -102,7 +102,7 @@ length(organism.regulome)
 
 ## ont = BP de biological process, mirar tb los demas pal trabajo de verdad
 
-ego <- enrichGO(gene          = prr5.regulome,
+ego <- enrichGO(gene          = organism.regulome,
                 universe      = my.universe,
                 OrgDb         = org.At.tair.db,
                 ont           = "ALL",
