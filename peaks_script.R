@@ -14,6 +14,9 @@ up1 <- as.numeric(arguments[3])
 down1 <- as.numeric(arguments[4])
 up2 <- as.numeric(arguments[5])
 down2 <- as.numeric(arguments[6])
+p_value_go <- as.numeric(arguments[7])
+p_value_kegg <- as.numeric(arguments[8])
+title <- arguments[9]
 
 ## Installing packages:
 
@@ -34,6 +37,10 @@ library("org.At.tair.db")
 
 #if (!require("clusterProfiler")) BiocManager::install("clusterProfiler")
 library("clusterProfiler")
+
+#BiocManager::install("ggnewscale")
+library("ggnewscale")
+
 
 ## Getting genetic information from organism
 
@@ -58,7 +65,7 @@ summit
 
 ## Peak localization
 
-covplot(peak, weightCol="V5")
+covplot(peak, weightCol="V5", title = title)
 
 ## Defining promoters
 
@@ -69,10 +76,10 @@ Promoters_summit <- getPromoters(TxDb=txdb, upstream=up2, downstream=down2)
 ## Peak and summit annotation
 
 peakAnno_peak <- annotatePeak(peak = peak, tssRegion = c(-up1,down1), TxDb = txdb, annoDb = "org.At.tair.db" )
-plotAnnoPie(peakAnno_peak)
+plotAnnoPie(peakAnno_peak, main=title)
 
 peakAnno_summit <- annotatePeak(peak = summit, tssRegion = c(-up2,down2), TxDb = txdb, annoDb = "org.At.tair.db")
-plotAnnoPie(peakAnno_summit)
+plotAnnoPie(peakAnno_summit, main=title)
 
 df.annotation_peak <- as.data.frame(peakAnno_peak)
 head(df.annotation_peak)
@@ -106,10 +113,15 @@ ego <- enrichGO(gene          = organism.regulome,
                 universe      = my.universe,
                 OrgDb         = org.At.tair.db,
                 ont           = "ALL",
+                pvalueCutoff  = p_value_go,
                 keyType = 'TAIR')
-head(ego)
 
 head(ego)
+
+dotplot(ego, showCategory = 30, title = title)
+barplot(ego, showCategory = 30, title = title)
+cnetplot(ego, title = title)
+
 
 ## key type es la base de datos usada para el gene id
 
@@ -117,25 +129,41 @@ head(ego)
 ## enriched terms found y a mi 256 xd 
 ## y los plots a partir de aki me he keao atras
 
-barplot(ego, showCategory=20)
+#barplot(ego, showCategory=20)
 
 ## le sale que regula respuesta a carriquina pero a mi no. es un
 ## compuesto de incendio, ayuda a germinacion despues de incendio. 
 ## germinacion tras incendio es dependiente del reloj circadiano y 
 ## especificamente de prr5. 
 
-dotplot(ego)
+#dotplot(ego)
 
 ## A el le gusta el siguiente, que es una red de concepto. Une genes
 ## a terminos de GO
 
-cnetplot(ego)
+#cnetplot(ego)
 
 ## Tb esta bien porque dice que prr5 esta involucrado en desarrollo de
 ## organos (a mi no me sale) y en respuestas a falta de agua, sust org,
 ## y luego de forma aislada a carriquina y frio 
 
-emapplot(ego)
+#emapplot(ego)
 
 ## Otro tipo de enriquecimiento que no hemos visto es el de las rutas
 ## KEGG (mirar por nuestra cuenta). 
+
+AT<- search_kegg_organism('Arabidopsis thaliana', by= 'scientific_name')
+dim(AT)
+
+pathway.enrich <- enrichKEGG(gene=organism.regulome, 
+                             organism="ath",
+                             keyType = "kegg", 
+                             pvalueCutoff = p_value_kegg, 
+                             pAdjustMethod = "BH")
+
+head(pathway.enrich)
+
+dotplot(ego,showCategory = 30 , title = title)
+barplot(ego,showCategory = 30 , title = title)
+cnetplot(ego , title = title)
+

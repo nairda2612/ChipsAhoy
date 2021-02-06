@@ -51,6 +51,10 @@ UP2=$(grep up2: $PARAMS | awk '{ print $2 }')
 echo "up1 = $UP2"
 DOWN2=$(grep down2: $PARAMS | awk '{ print $2 }')
 echo "down1 = $DOWN2"
+PVALUEGO=$(grep pvalueCutoff: $PARAMS | awk '{ print $2 }')
+echo "PvalueCutoff = $PVALUEGO"
+PVALUEKEGG=$(grep pvaluekegg: $PARAMS | awk '{ print $2 }')
+echo "Pvaluekegg = $PVALUEKEGG"
 
 
 i=1
@@ -240,7 +244,9 @@ NRESULTS=${#SUMMITSBED[@]}
 i=0
 while [ $i -le $NRESULTS ]
 do
-   Rscript peaks_script.R ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $UP1 $DOWN1 $UP2 $DOWN2 --verbose
+   j=$(($i+1))
+   Rscript peaks_script.R ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $UP1 $DOWN1 $UP2 $DOWN2 $PVALUEGO $PVALUEKEGG Plot$j  --verbose
+   mv Rplots.pdf Rplots$j.pdf
    ((i++))
 done
 
