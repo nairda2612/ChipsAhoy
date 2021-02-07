@@ -42,6 +42,7 @@ echo "Reference genome = $GENOME"
 ANNOT=$(grep path_annotation: $PARAMS | awk '{ print $2 }')
 echo "Genome Annotation = $ANNOT"
 PAIRED=$(grep paired: $PARAMS | awk '{ print $2 }')
+echo "Paired reads = $PAIRED"
 
 UP1=$(grep up1: $PARAMS | awk '{ print $2 }')
 echo "up1 = $UP1"
@@ -240,7 +241,7 @@ then
       do
          SAMPLENAME1=$"chip_$i$j"
          SAMPLENAME2=0
-         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED
          ((j++))
       done
       ((i++))
@@ -256,7 +257,7 @@ else
          SAMPLENAME1=$"chip_$i$j$l"
          ((l++))
          SAMPLENAME2=$"chip_$i$j$l"
-         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED
          ((j++))
       done
       ((i++))
@@ -291,7 +292,7 @@ then
       do
          SAMPLENAME1=$"control_$i$j"
          SAMPLENAME2=0
-         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED
          ((j++))
       done
       ((i++))
@@ -307,7 +308,7 @@ else
          SAMPLENAME1=$"control_$i$j$l"
          ((l++))
          SAMPLENAME2=$"control_$i$j$l"
-         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED
          ((j++))
       done
       ((i++))
