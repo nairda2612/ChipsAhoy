@@ -3,7 +3,11 @@
 ##Parameters:
 SAMPLE_DIR=$1
 INSDIR=$2
-SAMPLENAME=$3
+SAMPLENAME1=$3
+SAMPLENAME2=$4
+i=$5
+j=$6
+SAMPLENAME=$"chip_$i$j"
 
 echo ""
 echo "========================="
@@ -13,21 +17,33 @@ echo ""
 
 cd ${SAMPLE_DIR}
 
-# Quality control
+# Quality control and Mapping reads to reference genome
 
-fastqc $SAMPLENAME.gz
-
-# Mapping reads to reference genome
-bowtie2 -x ../../../genome/index -U $SAMPLENAME.gz -S $SAMPLENAME.sam 2> mapping_file.txt & PID=$!
-
-echo "Wait, principal Faragonda is managing the situation..."
-printf "["
-# While process is running...
-while kill -0 $PID 2> /dev/null; do
-    printf  "⚡"
-    sleep 1
-done
-printf "] Finiquitao, maravillosa gestión de la Directora Faragonda !"
+if [ $PAIRED -eq 0 ]
+then
+   fastqc $SAMPLENAME1.gz
+   bowtie2 -x ../../../genome/index -U $SAMPLENAME1.gz -S $SAMPLENAME.sam 2> mapping_file.txt & PID=$!
+   echo "Wait, principal Faragonda is managing the situation..."
+   printf "["
+   # While process is running...
+   while kill -0 $PID 2> /dev/null; do
+      printf  "⚡"
+      sleep 1
+   done
+   printf "] Finiquitao, maravillosa gestión de la Directora Faragonda !"
+else
+   fastqc $SAMPLENAME1.gz
+   fastqc $SAMPLENAME2.gz
+   bowtie2 -x ../../../genome/index -1 $SAMPLENAME1.gz -2 $SAMPLENAME2.gz -S $SAMPLENAME.sam 2> mapping_file.txt & PID=$!
+   echo "Wait, principal Faragonda is managing the situation..."
+   printf "["
+   # While process is running...
+   while kill -0 $PID 2> /dev/null; do
+      printf  "⚡"
+      sleep 1
+   done
+   printf "] Finiquitao, maravillosa gestión de la Directora Faragonda !"
+fi
 
 samtools sort -o $SAMPLENAME.bam $SAMPLENAME.sam
 rm $SAMPLENAME.sam

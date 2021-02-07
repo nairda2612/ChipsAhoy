@@ -41,7 +41,7 @@ GENOME=$(grep path_genome: $PARAMS | awk '{ print $2 }')
 echo "Reference genome = $GENOME"
 ANNOT=$(grep path_annotation: $PARAMS | awk '{ print $2 }')
 echo "Genome Annotation = $ANNOT"
-
+PAIRED=$(grep paired: $PARAMS | awk '{ print $2 }')
 
 UP1=$(grep up1: $PARAMS | awk '{ print $2 }')
 echo "up1 = $UP1"
@@ -142,18 +142,35 @@ do
    mkdir chip_sample_$i
    cd  chip_sample_$i
    j=1
-   while [ $j -le $NUMREPTF ]
-   do
-     cp ${CHIP[$k]} chip_$i$j
-     echo ${CHIP[$k]}
-     gzip chip_$i$j
-     echo "chip_$i$j zipped"
-     ((k++))
-     ((j++))
-   done
-   cd ..
-   ((i++))
+   if [ $PAIRED -eq 0 ]
+   then
+      while [ $j -le $NUMREPTF ]
+      do
+        cp ${CHIP[$k]} chip_$i$j.gz
+        echo ${CHIP[$k]}
+        ((k++))
+        ((j++))
+      done
+      cd ..
+      ((i++))
+   else
+      while [ $j -le $NUMREPTF ]
+      do
+         l=1
+         cp ${CHIP[$k]} chip_$i$j$l.gz
+         echo ${CHIP[$k]}
+         ((l++))
+         ((k++))
+         cp ${CHIP[$k]} chip_$i$j$l.gz
+         echo ${CHIP[$k]}
+         ((k++))
+         ((j++))
+      done
+      cd ..
+      ((i++))
+   fi
 done
+
 
 cd ../control
 
@@ -162,53 +179,140 @@ k=0
 while [ $i -le $NUMCONTROL ]
 do
    mkdir control_sample_$i
-   cd control_sample_$i
+   cd  control_sample_$i
    j=1
-   while [ $j -le $NUMREPCON ]
-   do
-     cp ${CONTROL[$k]} control_$i$j
-     echo ${CONTROL[$k]}
-     gzip control_$i$j
-     echo "control_$i$j zipped"
-     ((k++))
-     ((j++))
-   done
-   cd ..
-   ((i++)) 
+   if [ $PAIRED -eq 0 ]
+   then
+      while [ $j -le $NUMREPCON ]
+      do
+        cp ${CONTROL[$k]} control_$i$j.gz
+        echo ${CONTROL[$k]}
+        ((k++))
+        ((j++))
+      done
+      cd ..
+      ((i++))
+   else
+      while [ $j -le $NUMREPCON ]
+      do
+         l=1
+         cp ${CONTROL[$k]} control_$i$j$l.gz
+         echo ${CONTROL[$k]}
+         ((l++))
+         ((k++))
+         cp ${CONTROL[$k]} control_$i$j$l.gz
+         echo ${CONTROL[$k]}
+         ((k++))
+         ((j++))
+      done
+      cd ..
+      ((i++))
+   fi
 done
 
 echo "Samples charged!!"
 
 cd ../../results
 
-#Processing Chip samples:
-i=1
-while [ $i -le $NUMTF ]
-do
-   j=1
-   while [ $j -le $NUMREPTF ] 
-   do 
-      bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR chip_$i$j
-      ((j++))
-   done
-   ((i++))
-done
+#Processing Chip samples: ANTIGUO
+#i=1
+#while [ $i -le $NUMTF ]
+#do
+#   j=1
+#   while [ $j -le $NUMREPTF ] 
+#   do 
+#      bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR chip_$i$j
+#      ((j++))
+#   done
+#   ((i++))
+#done
 
 
-#Processing Input samples:
+# Processing Chip samples: NUEVO
 
-i=1
-while [ $i -le $NUMCONTROL ]
-do
-   j=1
-   while [ $j -le $NUMREPCON ]
+if [ $PAIRED -eq 0 ]
+then
+   i=1
+   while [ $i -le $NUMTF ]
    do
-      bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR control_$i$j
-      ((j++))
+      j=1
+      while [ $j -le $NUMREPTF ]
+      do
+         SAMPLENAME1=$"chip_$i$j"
+         SAMPLENAME2=0
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j
+         ((j++))
+      done
+      ((i++))
    done
-   ((i++))
-done
+else
+   i=1
+   while [ $i -le $NUMTF ]
+   do
+      j=1
+      while [ $j -le $NUMREPTF ]
+      do
+         l=1
+         SAMPLENAME1=$"chip_$i$j$l"
+         ((l++))
+         SAMPLENAME2=$"chip_$i$j$l"
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j
+         ((j++))
+      done
+      ((i++))
+   done
+fi
 
+
+#Processing Control samples: ANTIGUO
+
+#i=1
+#while [ $i -le $NUMCONTROL ]
+#do
+#   j=1
+#   while [ $j -le $NUMREPCON ]
+#   do
+#      bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR control_$i$j
+#      ((j++))
+#   done
+#   ((i++))
+#done
+
+
+# Processing Control samples: NUEVO
+
+if [ $PAIRED -eq 0 ]
+then
+   i=1
+   while [ $i -le $NUMCONTROL ]
+   do
+      j=1
+      while [ $j -le $NUMREPCON ]
+      do
+         SAMPLENAME1=$"control_$i$j"
+         SAMPLENAME2=0
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j
+         ((j++))
+      done
+      ((i++))
+   done
+else
+   i=1
+   while [ $i -le $NUMCONTROL ]
+   do
+      j=1
+      while [ $j -le $NUMREPCON ]
+      do
+         l=1
+         SAMPLENAME1=$"control_$i$j$l"
+         ((l++))
+         SAMPLENAME2=$"control_$i$j$l"
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j
+         ((j++))
+      done
+      ((i++))
+   done
+fi
 
 echo "Individual samples have been correctly processed bro!!"
 
