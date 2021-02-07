@@ -257,7 +257,8 @@ rm peaks_script.R
 i=0
 while [ $i -le $NRESULTS ]
 do
-  findMotifsGenome.pl ${SUMMITSBED[$i]} ../genome/genome.fa find_motifs$i -len 8 -size 100
+  j=$(($i+1))
+  findMotifsGenome.pl ${SUMMITSBED[$i]} ../genome/genome.fa find_motifs$j -len 8 -size 100
   ((i++))
 done
 
