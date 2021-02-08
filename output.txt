@@ -5,7 +5,7 @@
 
 Installation directory = /home/emma/github_repos
 Working directory = /home/emma/tmp
-Experiment name = abamyb44
+Experiment name = myb44
 Number of TF replicas = 2
 Number of control replicas = 2
 Number of TF samples = 2
@@ -64,7 +64,7 @@ Input files DNA, FASTA:
   genome.fa
 Building a SMALL index
 Reading reference sizes
-  Time reading reference sizes: 00:00:01
+  Time reading reference sizes: 00:00:02
 Calculating joined length
 Writing header
 Reserving space for joined string
@@ -82,7 +82,7 @@ Building DifferenceCoverSample
   V-Sorting samples time: 00:00:03
   Allocating rank array
   Ranking v-sort output
-  Ranking v-sort output time: 00:00:01
+  Ranking v-sort output time: 00:00:00
   Invoking Larsson-Sadakane on ranks
   Invoking Larsson-Sadakane on ranks time: 00:00:01
   Sanity-checking and returning

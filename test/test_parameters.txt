@@ -1,6 +1,6 @@
 installation_directory: /home/emma/github_repos
 working_directory: /home/emma/tmp
-experiment_name: abamyb44
+experiment_name: myb44
 number_rep_tf: 2
 number_rep_control: 2
 path_genome: /home/emma/prueba/genome.fa

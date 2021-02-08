@@ -8,7 +8,7 @@ SAMPLENAME2=$4
 i=$5
 j=$6
 PAIRED=$7
-SAMPLENAME=$"chip_$i$j"
+SAMPLENAME=$8
 
 echo ""
 echo "========================="

@@ -241,7 +241,7 @@ then
       do
          SAMPLENAME1=$"chip_$i$j"
          SAMPLENAME2=0
-         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED chip_$i$j
          ((j++))
       done
       ((i++))
@@ -257,7 +257,7 @@ else
          SAMPLENAME1=$"chip_$i$j$l"
          ((l++))
          SAMPLENAME2=$"chip_$i$j$l"
-         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/chip/chip_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED chip_$i$j
          ((j++))
       done
       ((i++))
@@ -292,7 +292,7 @@ then
       do
          SAMPLENAME1=$"control_$i$j"
          SAMPLENAME2=0
-         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED control_$i$j
          ((j++))
       done
       ((i++))
@@ -308,7 +308,7 @@ else
          SAMPLENAME1=$"control_$i$j$l"
          ((l++))
          SAMPLENAME2=$"control_$i$j$l"
-         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED
+         bash $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/samples/control/control_sample_$i $INSDIR $SAMPLENAME1 $SAMPLENAME2 $i $j $PAIRED control_$i$j
          ((j++))
       done
       ((i++))
