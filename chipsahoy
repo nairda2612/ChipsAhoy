@@ -346,12 +346,12 @@ SUMMITSBED+=(*summits.bed)
 
 NRESULTS=${#SUMMITSBED[@]}
 
-i=0
+i=1
 while [ $i -le $NRESULTS ]
 do
-   j=$(($i+1))
-   Rscript peaks_script.R ${NARROWPEAK[$i]} ${SUMMITSBED[$i]} $UP1 $DOWN1 $UP2 $DOWN2 $PVALUEGO $PVALUEKEGG Plot$j  --verbose
-   mv Rplots.pdf Rplots$j.pdf
+   j=$(($i-1))
+   Rscript peaks_script.R ${NARROWPEAK[$j]} ${SUMMITSBED[$j]} $UP1 $DOWN1 $UP2 $DOWN2 $PVALUEGO $PVALUEKEGG Plot$i  --verbose
+   mv Rplots.pdf Rplots$i.pdf
    ((i++))
 done
 
@@ -359,11 +359,11 @@ rm peaks_script.R
 
 ##Homer analysis.
 
-i=0
+i=1
 while [ $i -le $NRESULTS ]
 do
-  j=$(($i+1))
-  findMotifsGenome.pl ${SUMMITSBED[$i]} ../genome/genome.fa find_motifs$j -len 8 -size 100
+  j=$(($i-1))
+  findMotifsGenome.pl ${SUMMITSBED[$j]} ../genome/genome.fa find_motifs$i -len 8 -size 100
   ((i++))
 done
 

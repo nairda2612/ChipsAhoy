@@ -5,7 +5,7 @@
 
 Installation directory = /home/emma/github_repos
 Working directory = /home/emma/tmp
-Experiment name = prueba
+Experiment name = abamyb44
 Number of TF replicas = 2
 Number of control replicas = 2
 Number of TF samples = 2
@@ -64,95 +64,12 @@ Input files DNA, FASTA:
   genome.fa
 Building a SMALL index
 Reading reference sizes
-  Time reading reference sizes: 00:00:02
-Calculating joined length
-Writing header
-Reserving space for joined string
-Joining reference sequences
-  Time to join reference sequences: 00:00:01
-bmax according to bmaxDivN setting: 29870385
-Using parameters --bmax 22402789 --dcv 1024
-  Doing ahead-of-time memory usage test
-  Passed!  Constructing with these parameters: --bmax 22402789 --dcv 1024
-Constructing suffix-array element generator
-Building DifferenceCoverSample
-  Building sPrime
-  Building sPrimeOrder
-  V-Sorting samples
-  V-Sorting samples time: 00:00:03
-  Allocating rank array
-  Ranking v-sort output
-  Ranking v-sort output time: 00:00:00
-  Invoking Larsson-Sadakane on ranks
-  Invoking Larsson-Sadakane on ranks time: 00:00:01
-  Sanity-checking and returning
-Building samples
-Reserving space for 12 sample suffixes
-Generating random suffixes
-QSorting 12 sample offsets, eliminating duplicates
-QSorting sample offsets, eliminating duplicates time: 00:00:00
-Multikey QSorting 12 samples
-  (Using difference cover)
-  Multikey QSorting samples time: 00:00:00
-Calculating bucket sizes
-Splitting and merging
-  Splitting and merging time: 00:00:00
-Avg bucket size: 1.19482e+08 (target: 22402788)
-Converting suffix-array elements to index image
-Allocating ftab, absorbFtab
-Entering Ebwt loop
-Getting block 1 of 1
-  No samples; assembling all-inclusive block
-  Sorting block of length 119481543 for bucket 1
-  (Using difference cover)
-  Sorting block time: 00:00:41
-Returning block of 119481544 for bucket 1
-Exited Ebwt loop
-fchr[A]: 0
-fchr[C]: 38223602
-fchr[G]: 59775041
-fchr[T]: 81303691
-fchr[$]: 119481543
-Exiting Ebwt::buildToDisk()
-Returning from initFromVector
-Wrote 44026387 bytes to primary EBWT file: index.1.bt2
-Wrote 29870392 bytes to secondary EBWT file: index.2.bt2
-Re-opening _in1 and _in2 as input streams
-Returning from Ebwt constructor
-Headers:
-    len: 119481543
-    bwtLen: 119481544
-    sz: 29870386
-    bwtSz: 29870386
-    lineRate: 6
-    offRate: 4
-    offMask: 0xfffffff0
-    ftabChars: 10
-    eftabLen: 20
-    eftabSz: 80
-    ftabLen: 1048577
-    ftabSz: 4194308
-    offsLen: 7467597
-    offsSz: 29870388
-    lineSz: 64
-    sideSz: 64
-    sideBwtSz: 48
-    sideBwtLen: 192
-    numSides: 622300
-    numLines: 622300
-    ebwtTotLen: 39827200
-    ebwtTotSz: 39827200
-    color: 0
-    reverse: 0
-Total time for call to driver() for forward index: 00:01:03
-Reading reference sizes
   Time reading reference sizes: 00:00:01
 Calculating joined length
 Writing header
 Reserving space for joined string
 Joining reference sequences
   Time to join reference sequences: 00:00:01
-  Time to reverse reference sequence: 00:00:00
 bmax according to bmaxDivN setting: 29870385
 Using parameters --bmax 22402789 --dcv 1024
   Doing ahead-of-time memory usage test
@@ -165,7 +82,7 @@ Building DifferenceCoverSample
   V-Sorting samples time: 00:00:03
   Allocating rank array
   Ranking v-sort output
-  Ranking v-sort output time: 00:00:00
+  Ranking v-sort output time: 00:00:01
   Invoking Larsson-Sadakane on ranks
   Invoking Larsson-Sadakane on ranks time: 00:00:01
   Sanity-checking and returning
@@ -188,79 +105,3 @@ Getting block 1 of 1
   No samples; assembling all-inclusive block
   Sorting block of length 119481543 for bucket 1
   (Using difference cover)
-  Sorting block time: 00:00:41
-Returning block of 119481544 for bucket 1
-Exited Ebwt loop
-fchr[A]: 0
-fchr[C]: 38223602
-fchr[G]: 59775041
-fchr[T]: 81303691
-fchr[$]: 119481543
-Exiting Ebwt::buildToDisk()
-Returning from initFromVector
-Wrote 44026387 bytes to primary EBWT file: index.rev.1.bt2
-Wrote 29870392 bytes to secondary EBWT file: index.rev.2.bt2
-Re-opening _in1 and _in2 as input streams
-Returning from Ebwt constructor
-Headers:
-    len: 119481543
-    bwtLen: 119481544
-    sz: 29870386
-    bwtSz: 29870386
-    lineRate: 6
-    offRate: 4
-    offMask: 0xfffffff0
-    ftabChars: 10
-    eftabLen: 20
-    eftabSz: 80
-    ftabLen: 1048577
-    ftabSz: 4194308
-    offsLen: 7467597
-    offsSz: 29870388
-    lineSz: 64
-    sideSz: 64
-    sideBwtSz: 48
-    sideBwtLen: 192
-    numSides: 622300
-    numLines: 622300
-    ebwtTotLen: 39827200
-    ebwtTotSz: 39827200
-    color: 0
-    reverse: 1
-Total time for backward call to driver() for mirror index: 00:01:03
-Index done!!
-/home/emma/prueba/SRR3418106_1.fastq.gz
-/home/emma/prueba/SRR3418108_1.fastq.gz
-/home/emma/prueba/SRR3418107_1.fastq.gz
-/home/emma/prueba/SRR3418109_1.fastq.gz
-/home/emma/prueba/SRR3418152_1.fastq.gz
-/home/emma/prueba/SRR3418153_1.fastq.gz
-Samples charged!!
-
-=========================
-|PROCESSING chip_11 |
-=========================
-
-Started analysis of chip_11.gz
-Approx 5% complete for chip_11.gz
-Approx 10% complete for chip_11.gz
-Approx 15% complete for chip_11.gz
-Approx 20% complete for chip_11.gz
-Approx 25% complete for chip_11.gz
-Approx 30% complete for chip_11.gz
-Approx 35% complete for chip_11.gz
-Approx 40% complete for chip_11.gz
-Approx 45% complete for chip_11.gz
-Approx 50% complete for chip_11.gz
-Approx 55% complete for chip_11.gz
-Approx 60% complete for chip_11.gz
-Approx 65% complete for chip_11.gz
-Approx 70% complete for chip_11.gz
-Approx 75% complete for chip_11.gz
-Approx 80% complete for chip_11.gz
-Approx 85% complete for chip_11.gz
-Approx 90% complete for chip_11.gz
-Approx 95% complete for chip_11.gz
-Analysis complete for chip_11.gz
-Wait, principal Faragonda is managing the situation...
-[⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡
