@@ -2,13 +2,10 @@
 
 ##Parameters:
 SAMPLE_DIR=$1
-INSDIR=$2
-SAMPLENAME1=$3
-SAMPLENAME2=$4
-i=$5
-j=$6
-PAIRED=$7
-SAMPLENAME=$8
+SAMPLENAME1=$2
+SAMPLENAME2=$3
+PAIRED=$4
+SAMPLENAME=$5
 
 echo ""
 echo "========================="
@@ -18,7 +15,7 @@ echo ""
 
 cd ${SAMPLE_DIR}
 
-# Quality control and Mapping reads to reference genome
+# Quality control and Mapping reads to reference genome.
 
 if [ $PAIRED -eq 0 ]
 then
