@@ -94,30 +94,12 @@ head(df.annotation_summit)
 ## probablemente se corresponden con zonas de regulación de la 
 ## transcripción.
 
-##LINEAS PARA PODER HACER EL EXAMEN:
-#total.annotations <- unique(df.annotation_summit$annotation)
-#excluir <- c("Distal Intergenic","Downstream (1-2kb)","Downstream (2-3kb)","Downstream (<1kb)")
-#my.annotation <- setdiff(total.annotations,excluir)
-
-
-#epi.df.annotation <- subset(df.annotation_summit, annotation %in% my.annotation)
-#head(epi.df.annotation)
-
-
-## FIN LINEA NUEVA
-
 promoter.df.annotation_peak <- subset(df.annotation_peak, annotation == "Promoter")
 head(promoter.df.annotation_peak)
 
 ## Solo queremos además el nombre del gen que se encuentra aguas abajo
 ## de esta región que suponemos que será su promotor, por eso hacemos
 ## lo siguiente.
-
-#organism.regulome <- epi.df.annotation$geneId
-#length(organism.regulome)
-#write.table(organism.regulome, file = "regulome.txt", sep = "\t",
-           # row.names = FALSE)
-
 
 organism.regulome <- promoter.df.annotation_peak$geneId
 length(organism.regulome)
