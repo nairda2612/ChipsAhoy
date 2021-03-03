@@ -7,55 +7,66 @@ SAMPLENAME2=$3
 PAIRED=$4
 SAMPLENAME=$5
 
-echo ""
-echo "========================="
-echo "|PROCESSING $SAMPLENAME |" 
-echo "========================="
-echo ""
+
+echo " "
+echo " ========================== "
+echo " | PROCESSING $SAMPLENAME | "
+echo " ========================== "
+echo " "
+
 
 cd ${SAMPLE_DIR}
 
-# Quality control and Mapping reads to reference genome.
+echo " "
+echo "  ———————————————————————————————————————————————————————  "
+echo " | Quality control and Mapping reads to reference genome | "
+echo "  ———————————————————————————————————————————————————————  "
+echo " "
 
 if [ $PAIRED -eq 0 ]
 then
    fastqc $SAMPLENAME1.gz
    bowtie2 -x ../../../genome/index -U $SAMPLENAME1.gz -S $SAMPLENAME.sam 2> mapping_file.txt & PID=$!
-   echo "Wait, principal Faragonda is managing the situation..."
+   echo "Wait, Headmistress Faragonda is managing the situation..."
    printf "["
    # While process is running...
    while kill -0 $PID 2> /dev/null; do
       printf  "⚡"
       sleep 1
    done
-   printf "] Finiquitao, maravillosa gestión de la Directora Faragonda !"
+   printf "] Finiquitao, wonderful management by Headmistress Faragonda !"
 else
    fastqc $SAMPLENAME1.gz
    fastqc $SAMPLENAME2.gz
    bowtie2 -x ../../../genome/index -1 $SAMPLENAME1.gz -2 $SAMPLENAME2.gz -S $SAMPLENAME.sam 2> mapping_file.txt & PID=$!
-   echo "Wait, principal Faragonda is managing the situation..."
+   echo "Wait, Headmistress Faragonda is managing the situation..."
    printf "["
    # While process is running...
    while kill -0 $PID 2> /dev/null; do
       printf  "⚡"
       sleep 1
    done
-   printf "] Finiquitao, maravillosa gestión de la Directora Faragonda !"
+   printf "] Finiquitao, wonderful management by Headmistress Faragonda !"
 fi
 
 samtools sort -o $SAMPLENAME.bam $SAMPLENAME.sam
 rm $SAMPLENAME.sam
 samtools index $SAMPLENAME.bam
 
-## Write on mapping file
+echo " "
+echo " "
+echo "  ———————————————————————————————————————————————————————  "
+echo " | Extracting to a file relevant information from mapping | "
+echo "  ———————————————————————————————————————————————————————  "
+echo " "
+
 mv mapping_file.txt ../../../results
 echo "$SAMPLENAME:" >> ../../../results/mapping_values.txt
 
 READS=$(grep reads ../../../results/mapping_file.txt | awk '{ print $1 }')
-echo "Number of reads ="$READS >> ../../../results/mapping_values.txt
+echo "Number of reads = "$READS >> ../../../results/mapping_values.txt
 
 OVALIGN=$(grep overall ../../../results/mapping_file.txt | awk '{ print $1 }')
-echo "Overall alignment ="$OVALIGN >> ../../../results/mapping_values.txt
+echo "Overall alignment = "$OVALIGN >> ../../../results/mapping_values.txt
 
 rm ../../../results/mapping_file.txt
-

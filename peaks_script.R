@@ -1,32 +1,44 @@
-## Author: The Winx Club
-## Email: winx@alum.alfea.es
-## Date: January 30
+## Author: The Winx Club: Andrea Fernandez Veloso, Adrian Perera Bonaño and Emma Serrano Perez.
+## Email: fvandrea99@gmail.com, adrianpererads@gmail.com and emma.serrano.perez.99@gmail.com.
 
-##This script works with arguments in order to submit it with R script. 
-##If you want to run it in Rstudio, don't use arguments. ARREGLAR!!!
+## This R script works with arguments passed from a bash script. 
+## To run this from the Rstudio environment, the vector "arguments" is not necessary, and every
+## file needs to be read individually. 
 
-# Arguments:
+# Saving arguments in individual variables:
+
 arguments <- commandArgs(trailingOnly = TRUE)
+print(arguments)
 
-narrow_peak <- arguments[1] #Peaks file
-summits_bed <- arguments[2] #Summits file
+narrow_peak <- arguments[1]
+summits_bed <- arguments[2]
 up1 <- as.numeric(arguments[3])
 down1 <- as.numeric(arguments[4])
 up2 <- as.numeric(arguments[5])
 down2 <- as.numeric(arguments[6])
 p_value_go <- as.numeric(arguments[7])
 p_value_kegg <- as.numeric(arguments[8])
-title <- arguments[9]
+name_sample <- arguments[9]
+
 
 ## Installing packages:
 
 #if (!requireNamespace("BiocManager", quietly = TRUE))
 #  install.packages("BiocManager")
 
+# General packages.
+
 #if (!require("ChIPseeker")) BiocManager::install("ChIPseeker")
 library("ChIPseeker")
 
-# paketes de organismos concretos
+#if (!require("clusterProfiler")) BiocManager::install("clusterProfiler")
+library("clusterProfiler")
+
+#if (!requireNamespace("ggplot2", quietly = TRUE))
+#  install.packages("ggplot2")
+library("ggplot2")
+
+# Organism specific packages.
 
 #if (!require(txdb)) BiocManager::install(txdb)
 library("TxDb.Athaliana.BioMart.plantsmart28")
@@ -35,37 +47,34 @@ txdb <- TxDb.Athaliana.BioMart.plantsmart28
 #if (!require(annoDb_name)) BiocManager::install(annoDb_name)
 library("org.At.tair.db")
 
-#if (!require("clusterProfiler")) BiocManager::install("clusterProfiler")
-library("clusterProfiler")
-
-#BiocManager::install("ggnewscale")
-library("ggnewscale")
-
 
 ## Getting genetic information from organism
 
 genes.organism <- as.data.frame(genes(txdb))
 head(genes.organism)
 
-## La primera columna es el cromosoma donde se encuentra cada gen, PONER ENGLISH
-## y en este caso nos interesa solo el del cromosoma 1, que sera
-## nuevtro universo
+## Defining the experiment universe
 
 my.universe<-genes.organism$gene_id
 
-## Reading peaks
+## Reading narrow peaks
 
 peak <- readPeakFile(peakfile = narrow_peak)
 peak
-#ACORDARSE QUE LOS NARROW IBAN EN COMILLA EN LOS ARGUMENTOS
-## Reading summits, maximo de los picos
+
+## Reading summits
 
 summit <- readPeakFile(peakfile = summits_bed)
 summit 
 
-## Peak localization
+## Peaks localization
 
-covplot(peak, weightCol="V5", title = title)
+name_covplot <- paste(name_sample, "_covplot.png", sep = "")
+title_covplot <- paste(name_sample, "peak coverage")
+
+png(file = name_covplot, width = 1536, height = 801, units = "px")
+covplot(peak, weightCol="V5", title = title_covplot, ylab = "ChIP Peaks")
+dev.off()
 
 ## Defining promoters
 
@@ -73,13 +82,25 @@ Promoters_peak <- getPromoters(TxDb=txdb, upstream=up1, downstream=down1)
 
 Promoters_summit <- getPromoters(TxDb=txdb, upstream=up2, downstream=down2)
 
-## Peak and summit annotation
+## Narrow peaks and summits annotation
+
+name_annopie_narrow <- paste(name_sample, "_annopie_narrow.png", sep = "")
+title_annopie_narrow <- paste(name_sample, "narrow peaks location")
 
 peakAnno_peak <- annotatePeak(peak = peak, tssRegion = c(-up1,down1), TxDb = txdb, annoDb = "org.At.tair.db" )
-plotAnnoPie(peakAnno_peak, main=title)
+png(file = name_annopie_narrow, width = 768, height = 400, units = "px")
+plotAnnoPie(peakAnno_peak)
+title(title_annopie_narrow, line = -5, cex = 15)
+dev.off()
+
+name_annopie_summit <- paste(name_sample, "_annopie_summit.png", sep = "")
+title_annopie_summit <- paste(name_sample, "summits location")
 
 peakAnno_summit <- annotatePeak(peak = summit, tssRegion = c(-up2,down2), TxDb = txdb, annoDb = "org.At.tair.db")
-plotAnnoPie(peakAnno_summit, main=title)
+png(file = name_annopie_summit, width = 768, height = 400, units = "px")
+plotAnnoPie(peakAnno_summit)
+title(title_annopie_summit, line = -5, cex = 15)
+dev.off()
 
 df.annotation_peak <- as.data.frame(peakAnno_peak)
 head(df.annotation_peak)
@@ -88,27 +109,25 @@ df.annotation_summit <- as.data.frame(peakAnno_summit)
 head(df.annotation_summit)
 
 
-## En la columna de anotación del df.annotation, te indica con qué
-## zona del gen se corresponde la localización de la cumbre. Solo
-## interesan aquellas que estén en el promotor porque serán las que
-## probablemente se corresponden con zonas de regulación de la 
-## transcripción.
+## Regulome determination
+
+## First, peaks located in promoter regions are extracted.
 
 promoter.df.annotation_peak <- subset(df.annotation_peak, annotation == "Promoter")
 head(promoter.df.annotation_peak)
 
-## Solo queremos además el nombre del gen que se encuentra aguas abajo
-## de esta región que suponemos que será su promotor, por eso hacemos
-## lo siguiente.
+## Getting names of genes located downstream the previously defined promoters, which is the regulome.
 
 organism.regulome <- promoter.df.annotation_peak$geneId
 length(organism.regulome)
-write.table(organism.regulome, file = "regulome.txt", sep = "\t",
-           row.names = FALSE)
 
-## Ontology terms with clusterprofiler
+name_regulome <- paste(name_sample, "_regulome.txt", sep = "")
 
-## ont = BP de biological process, mirar tb los demas pal trabajo de verdad
+write.table(organism.regulome, file = name_regulome, col.names = FALSE, row.names = FALSE)
+
+## GSEA with clusterProfiler
+
+## 1. Ontology terms enrichment
 
 ego <- enrichGO(gene          = organism.regulome,
                 universe      = my.universe,
@@ -116,55 +135,53 @@ ego <- enrichGO(gene          = organism.regulome,
                 ont           = "ALL",
                 pvalueCutoff  = p_value_go,
                 keyType = 'TAIR')
-
+print(ego)
+summary(as.data.frame(ego))
 head(ego)
 
-dotplot(ego, showCategory = 30, title = title)
-barplot(ego, showCategory = 30, title = title)
-cnetplot(ego, title = title)
+name_barplot_go <- paste(name_sample, "_barplot_go.png", sep = "")
+title_barplot_go <- paste(name_sample, "bar plot using GO enrichment analysis")
+png(file = name_barplot_go, width = 826, height = 622, units = "px")
+barplot(ego, showCategory = 30, title = title_barplot_go)
+dev.off()
 
+name_dotplot_go <- paste(name_sample, "_dotplot_go.png", sep = "")
+title_dotplot_go <- paste(name_sample, "dot plot using GO enrichment analysis")
+png(file = name_dotplot_go, width = 826, height = 622, units = "px")
+dotplot(ego, showCategory = 30, title = title_dotplot_go)
+dev.off()
 
-## key type es la base de datos usada para el gene id
+name_cnetplot_go <- paste(name_sample, "_cnetplot_go.png", sep = "")
+title_cnetplot_go <- paste(name_sample, "gene-concept network using GO enrichment analysis")
+png(file = name_cnetplot_go, width = 1536, height = 801, units = "px")
+cnetplot(ego, colorEdge = TRUE, node_label = "gene", cex_gene = 0.5) + ggtitle(title_cnetplot_go) + theme(plot.title = element_text(hjust = 0.5))
+dev.off()
 
-## que se supone q me tiene q salir al hacer head(ego?) a el le salen 30
-## enriched terms found y a mi 256 xd 
-## y los plots a partir de aki me he keao atras
+## 2. KEGG Pathways enrichment
 
-#barplot(ego, showCategory=20)
+ekegg <- enrichKEGG(gene = organism.regulome, 
+                           organism = "ath",
+                           universe = my.universe, 
+                           pvalueCutoff = p_value_kegg)
 
-## le sale que regula respuesta a carriquina pero a mi no. es un
-## compuesto de incendio, ayuda a germinacion despues de incendio. 
-## germinacion tras incendio es dependiente del reloj circadiano y 
-## especificamente de prr5. 
+print(ekegg)
+summary(as.data.frame(ekegg))
+head(ekegg)
 
-#dotplot(ego)
+name_barplot_kegg <- paste(name_sample, "_barplot_kegg.png", sep = "")
+title_barplot_kegg <- paste(name_sample, "bar plot using KEGG Pathways enrichment analysis")
+png(file = name_barplot_kegg, width = 826, height = 622, units = "px")
+barplot(ekegg, showCategory = 30, title = title_barplot_kegg)
+dev.off()
 
-## A el le gusta el siguiente, que es una red de concepto. Une genes
-## a terminos de GO
+name_dotplot_kegg <- paste(name_sample, "_dotplot_kegg.png", sep = "")
+title_dotplot_kegg <- paste(name_sample, "dot plot using KEGG Pathways enrichment analysis")
+png(file = name_dotplot_kegg, width = 826, height = 622, units = "px")
+dotplot(ekegg, showCategory = 30, title = title_dotplot_kegg)
+dev.off()
 
-#cnetplot(ego)
-
-## Tb esta bien porque dice que prr5 esta involucrado en desarrollo de
-## organos (a mi no me sale) y en respuestas a falta de agua, sust org,
-## y luego de forma aislada a carriquina y frio 
-
-#emapplot(ego)
-
-## Otro tipo de enriquecimiento que no hemos visto es el de las rutas
-## KEGG (mirar por nuestra cuenta). 
-
-AT<- search_kegg_organism('Arabidopsis thaliana', by= 'scientific_name')
-dim(AT)
-
-pathway.enrich <- enrichKEGG(gene=organism.regulome, 
-                             organism="ath",
-                             keyType = "kegg", 
-                             pvalueCutoff = p_value_kegg, 
-                             pAdjustMethod = "BH")
-
-head(pathway.enrich)
-
-dotplot(ego,showCategory = 30 , title = title)
-barplot(ego,showCategory = 30 , title = title)
-cnetplot(ego , title = title)
-
+name_cnetplot_kegg <- paste(name_sample, "_cnetplot_kegg.png", sep = "")
+title_cnetplot_kegg <- paste(name_sample, "gene-concept network using KEGG Pathways enrichment analysis")
+png(file = name_cnetplot_kegg, width = 1536, height = 801, units = "px")
+cnetplot(ekegg, colorEdge = TRUE, node_label = "gene", cex_gene = 0.5) + ggtitle(title_cnetplot_kegg) + theme(plot.title = element_text(hjust = 0.5))
+dev.off()

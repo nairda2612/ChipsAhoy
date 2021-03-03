@@ -10,18 +10,33 @@ then
    exit
 elif [ $# -gt 1 ]
 then
-   echo "FATAL ERROR!!!! I'm just joking son, you just entered more than one parameter"
+   echo "FATAL ERROR!!!! I'm just joking pal, you passed more parameters than requested. Run the script with no parameters to see the usage information"
    exit
 fi
+
+echo " "
+echo "Thank you for using "
+echo " "
+echo "  — —   —   —   —    — —    — —     — —    —   —    — —   —   —  "
+echo " |      |   |   |   |   |  |       |   |   |   |   |   |   \ /   "
+echo " |      |— —|   |   |— —    — —    |— —|   |— —|   |   |    |    "
+echo " |      |   |   |   |          |   |   |   |   |   |   |    |    "
+echo "  — —   —   —   —   —       — —    —   —   —   —    — —     —    "
+echo " "
 
 ## Reading in parameter file:
 PARAMS=$1
 
-echo ""
-echo "======================"
-echo "| LOADING PARAMETERS |"
-echo "======================"
-echo ""
+echo "                                                     "
+echo "                                 ▃                   "
+echo "                               ▞   ▚                 "
+echo " ======================        ▚   ▞                 "
+echo " | LOADING PARAMETERS |    — —   —   — —   —   — —   "
+echo " ======================       \ / \ /   \ / \ /      "
+echo "                               \   \     \   \       "
+echo "                              / \  /\   / \  /\      "
+echo "                           — —   ——  — —   ——  — —   "
+echo "                                                     "
 
 INSDIR=$(grep installation_directory: $PARAMS | awk '{ print $2 }')
 echo "Installation directory = $INSDIR"
@@ -52,10 +67,10 @@ UP2=$(grep up2: $PARAMS | awk '{ print $2 }')
 echo "up1 = $UP2"
 DOWN2=$(grep down2: $PARAMS | awk '{ print $2 }')
 echo "down1 = $DOWN2"
-PVALUEGO=$(grep pvalueCutoff: $PARAMS | awk '{ print $2 }')
-echo "PvalueCutoff = $PVALUEGO"
-PVALUEKEGG=$(grep pvaluekegg: $PARAMS | awk '{ print $2 }')
-echo "Pvaluekegg = $PVALUEKEGG"
+PVALUEGO=$(grep pvalueCutoffgo: $PARAMS | awk '{ print $2 }')
+echo "PvalueCutoff for GO enrichment analysis = $PVALUEGO"
+PVALUEKEGG=$(grep pvalueCutoffkegg: $PARAMS | awk '{ print $2 }')
+echo "PvalueCutoff for KEGG Pathways enrichment analisys = $PVALUEKEGG"
 
 # Reading samples.
 
@@ -107,16 +122,24 @@ echo "Broken array"
 echo ${CONTROL[@]}
 echo LENGTH=${#CONTROL[@]}
 
-
-echo "Parameters read!!"
-
+echo " "
+echo " ~~~~~~~~~~~~~~~~  "
+echo " Parameters read!  "
+echo " ~~~~~~~~~~~~~~~~  "
+echo " "
 
 ## Generating work space:
-echo ""
-echo "=========================="
-echo "| CREATING WORKING SPACE |"
-echo "=========================="
-echo ""
+
+echo "                                                     "
+echo "                                 ▃                   "
+echo "                               ▞   ▚                 "
+echo " ======================        ▚   ▞                 "
+echo " | CREATING WORK SPACE |   — —   —   — —   —   — —   "
+echo " ======================       \ / \ /   \ / \ /      "
+echo "                               \   \     \   \       "
+echo "                              / \  /\   / \  /\      "
+echo "                           — —   ——  — —   ——  — —   "
+echo "                                                     "
 
 cd $WD
 mkdir $EXP
@@ -131,7 +154,11 @@ cp $ANNOT annotation.gtf
 cd ../genome
 bowtie2-build genome.fa index
 
-echo "Index done!!"
+echo " "
+echo " ~~~~~~~~~~~ "
+echo " Index done! "
+echo " ~~~~~~~~~~~ "
+echo " "
 
 cd ../samples
 mkdir chip control
@@ -212,12 +239,26 @@ do
    fi
 done
 
-echo "Samples charged!!"
+echo " ~~~~~~~~~~~~~~~~  "
+echo " Samples charged! "
+echo " ~~~~~~~~~~~~~~~~  "
+echo " "
 
 cd ../../results
 
 
-# Processing Chip samples: NUEVO
+echo "                                                          "
+echo "                                      ▃                   "
+echo "                                    ▞   ▚                 "
+echo " ===========================        ▚   ▞                 "
+echo " | PROCESSING CHIP SAMPLES |    — —   —   — —   —   — —   "
+echo " ===========================       \ / \ /   \ / \ /      "
+echo "                                    \   \     \   \       "
+echo "                                   / \  /\   / \  /\      "
+echo "                                — —   ——  — —   ——  — —   "
+echo "                                                          "
+
+
 
 if [ $PAIRED -eq 0 ]
 then
@@ -253,7 +294,19 @@ else
 fi
 
 
-# Processing Control samples: 
+echo "                                                             "
+echo "                                         ▃                   "
+echo "                                       ▞   ▚                 "
+echo " ==============================        ▚   ▞                 "
+echo " | PROCESSING CONTROL SAMPLES |    — —   —   — —   —   — —   "
+echo " ==============================       \ / \ /   \ / \ /      "
+echo "                                       \   \     \   \       "
+echo "                                      / \  /\   / \  /\      "
+echo "                                   — —   ——  — —   ——  — —   "
+echo "                                                             "
+
+
+
 
 if [ $PAIRED -eq 0 ]
 then
@@ -288,9 +341,23 @@ else
    done
 fi
 
-echo "Individual samples have been correctly processed bro!!"
+echo " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "
+echo " Individual samples have been processed! "
+echo " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "
+echo " "
 
-#Peak calling samples:
+
+echo "                                                "
+echo "                            ▃                   "
+echo "                          ▞   ▚                 "
+echo " =================        ▚   ▞                 "
+echo " | PEAKS CALLING |    — —   —   — —   —   — —   "
+echo " =================       \ / \ /   \ / \ /      "
+echo "                          \   \     \   \       "
+echo "                         / \  /\   / \  /\      "
+echo "                      — —   ——  — —   ——  — —   "
+echo "                                                "
+
 
 i=1
 while [ $i -le $NUMTF ]
@@ -304,9 +371,26 @@ do
    ((i++))
 done
 
-echo "Peaks calling done!"
+echo " "
+echo " ~~~~~~~~~~~~~ "
+echo " Peaks called! "
+echo " ~~~~~~~~~~~~~ "
+echo "              The question is: will they answer?"
+echo "              Or will they ignore you, like your crush did?"
+echo " "
 
-# Regulome determination
+
+echo "                                                                  "
+echo "                                              ▃                   "
+echo "                                            ▞   ▚                 "
+echo " ===================================        ▚   ▞                 "
+echo " | REGULOME DETERMINATION AND GSEA |    — —   —   — —   —   — —   "
+echo " ===================================       \ / \ /   \ / \ /      "
+echo "                                            \   \     \   \       "
+echo "                                           / \  /\   / \  /\      "
+echo "                                        — —   ——  — —   ——  — —   "
+echo "                                                                  "
+
 
 cd
 cp $INSDIR/ChipsAhoy/peaks_script.R $WD/$EXP/results
@@ -319,19 +403,38 @@ SUMMITSBED+=(*summits.bed)
 
 NRESULTS=${#SUMMITSBED[@]}
 
+## AÑADIR $EXP$i$j COMO ULT PARAMETRO PARA NOMBRE DE LAS COSAS
+
 i=1
 while [ $i -le $NRESULTS ]
 do
    j=$(($i-1))
-   Rscript peaks_script.R ${NARROWPEAK[$j]} ${SUMMITSBED[$j]} $UP1 $DOWN1 $UP2 $DOWN2 $PVALUEGO $PVALUEKEGG Plot$i  --verbose
-   mv Rplots.pdf Rplots$i.pdf
-   mv regulome.txt regulome$i.txt
+   Rscript peaks_script.R ${NARROWPEAK[$j]} ${SUMMITSBED[$j]} $UP1 $DOWN1 $UP2 $DOWN2 $PVALUEGO $PVALUEKEGG $EXP$i  --verbose
+   rm Rplots.pdf
    ((i++))
 done
 
 rm peaks_script.R
 
-##Homer analysis.
+echo " "
+echo " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "
+echo " Regulome obtained and GSEA done! "
+echo " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "
+echo " "
+
+
+echo "                                                               "
+echo "                                           ▃                   "
+echo "                                         ▞   ▚                 "
+echo " ================================        ▚   ▞                 "
+echo " | SEARCHING FOR BINDING MOTIFS |    — —   —   — —   —   — —   "
+echo " ================================       \ / \ /   \ / \ /      "
+echo "                                         \   \     \   \       "
+echo "                                        / \  /\   / \  /\      "
+echo "                                     — —   ——  — —   ——  — —   "
+echo "                                                               "
+
+
 
 i=1
 while [ $i -le $NRESULTS ]
@@ -341,7 +444,25 @@ do
   ((i++))
 done
 
+echo " "
+echo " ~~~~~~~~~~~~~~~~~~~~~~~~~~~ "
+echo " Search for motifs finished! "
+echo " ~~~~~~~~~~~~~~~~~~~~~~~~~~~ "
+echo " "
+
 cd
 cp $INSDIR/ChipsAhoy/chipsahoy $WD/$EXP/scripts
 cp $INSDIR/ChipsAhoy/sample_processing $WD/$EXP/scripts
 cp $INSDIR/ChipsAhoy/peaks_script.R $WD/$EXP/scripts
+
+
+echo "                                                    "
+echo "                                ▃                   "
+echo "                              ▞   ▚                 "
+echo " =====================        ▚   ▞                 "
+echo " | ANALYSIS FINISHED |    — —   —   — —   —   — —   "
+echo " =====================       \ / \ /   \ / \ /      "
+echo "     Hope you found           \   \     \   \       "
+echo "     this pipeline           / \  /\   / \  /\      "
+echo "     useful! :)           — —   ——  — —   ——  — —   "
+echo "                                                    "
