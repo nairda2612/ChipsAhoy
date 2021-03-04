@@ -1,4 +1,4 @@
-# ChIPs Ahoy: An automatic pipeline to process and analyze ChIP-seq data
+# ChIPs Ahoy: An automatic pipeline to process and analyse ChIP-seq data
 
 Authors: 
 
@@ -38,18 +38,17 @@ University of Seville
 
 ## 1. Summary
 
-This repos has two bash scripts and one R script to analyse ilimited ChIP-seq samples, with the same controls samples, for transcription factors from Arabidopsis thaliana.
+This repository is made up of two bash scripts (chipsahoy and sample_processing) and one R script (peaks_script.R), to analyse unlimited ChIP-seq samples of transcription factors from Arabidopsis thaliana, comparing all of them with the same control samples. Actually, by running the main script, chipsahoy, the whole analysis is done, since this script is programmed to run the other two scripts when required.
+
+This way, with only one command, the whole ChIP-seq samples analysis is done and organized in intuitive directories. Briefly, this analysis consists of the quality control of the samples, the reads mapping, the peaks calling, the regulome determination and Gene Set Enrichment Analysis, and finaly, binding motifs determination.
+
+At the end of this README, a case study is presented.
+
 
 ## 2. Dependencies
+Tools needed to run the bash scripts: bowtie2, fastqc, samtools , macs2 and homer. These tools can be installed running the following command: sudo apt-get install <tool_name>
 
-R packages needed:
-clusterProlifer
-ChipSeeker
-ggplopt2
-TxDb for Arabidopsis thaliana
-org.tair.db
-
-It is also needed the toolbox HOMER
+Packages needed to run the R script: clusterProlifer, ChipSeeker, ggplot2, TxDb.Athaliana.Biomart.plantsmart28 and org.At.tair.db. All packages, except ggplot2, can be download from Bioconductor, running the following command in R: install(“<package_name>”). For ggplot2, this package can be download from the CRAN, running the following command in R: install.packages(“ggplot2”). 
 
 ## 3. Input
 
@@ -165,9 +164,9 @@ We recommend that the user visualises the alignment made on an interactive tool,
 
 ### f. Peaks calling
 
-Even though the reads are aligned on the genome, the user cannot know, only with that information, which are the possible target genes for the transcription factors analyzed. To check if the result of the mapping is significant, a statistical analysis is made. Using a contrast of hypothesis, the error probability can be determined. 
+Even though the reads are aligned on the genome, the user cannot know, only with that information, which are the possible target genes for the transcription factors analysed. To check if the result of the mapping is significant, a statistical analysis is made. Using a contrast of hypothesis, the error probability can be determined. 
 
-To call peaks, a sliding window goes through the genome, counting reads on the window defined, for chips and control samples. Then, the reads of each pair of samples are compared, and the statistic test previously explained, determines a fold-change and a p-value. This values represent the difference in the number of reads for the chip and control sample, and how significant is that difference, respectively. It is important to know that, since, this process is a multiple testing, a correction of the p-value, called q-value or FDR, needs to be made. Therefore, peaks are regions in which there is a significant difference of reads between the chip and the control samples.
+To call peaks, a sliding window goes through the genome, counting reads on the window defined, for chips and control samples. Then, the reads of each pair of samples are compared, and the statistic test previously explained, determines a fold-change and a p-value. This values represent the difference in the number of reads for the chip and control sample, and how significant is that difference, respectively. It is important to know that, since, this process is a multiple testing, a correction of the p-value, called q-value or FDR, needs to be made. Therefore, peaks are regions in which there is a significant difference of reads between the chip and the control samples.The combination of all the positions where the transcription factor binds significantly is known as the cistrome of a transcription factor, in a given condition.
 
 To guarantee that this code is run for every chip and control samples, a double while loop that goes through every chip and every control sample was configured. To call peaks, the function macs2 with the command callpeak is used. The arguments passed to this function are the following:
 
@@ -181,7 +180,7 @@ To guarantee that this code is run for every chip and control samples, a double 
 
 -- outdir to specify the output directory, which is still the results directory.
 
-After the peaks calling, the output files can be found on the results directory. Of all the files created, the ones of special interest in this work are the .narrowPeak and .bed files, with the significant narrow peaks and summits, respectively.
+After the peaks calling, the output files can be found on the results directory. Of all the files created, the ones of special interest in this work are the .narrowPeak and .bed files, with the significant narrow peaks and summits, respectively. 
 
 We recommend that the user visualises on an interactive tool, like IGV, the result of the alignment, and also the peaks called.
 
@@ -201,7 +200,7 @@ Then, the annotation is converted to data frame. Now, from each data frame, the 
 
 Once the regulome is determined, the next step is the Gene Set Enrichment Analysis (GSEA). Two GSEAs are made by this script, one using GO terms, and another one using KEGG Pathways. The functions for both GSEA are similar, enrichGO and enrichKEGG, respectively.
 
-The enrichGO function receives de regulome, the universe defined, an OrgDb object (in this case, that for Arabidopsis thaliana), the ontology terms to analyze (all, in this case), the p-value cutoff and the keyType (in this case, TAIR). 
+The enrichGO function receives de regulome, the universe defined, an OrgDb object (in this case, that for Arabidopsis thaliana), the ontology terms to analyse (all, in this case), the p-value cutoff and the keyType (in this case, TAIR). 
 
 The enrichKEGG receives the regulome, the universe defined, the organism code (in this case “ath”) and the p-value cutoff.
 
@@ -213,7 +212,7 @@ After this, the Rscript is over, and chipsahoy script continues running.
 
 The next step is to determine target sequences for the transcription factors studied, using the summits file. To make this, the toolbox HOMER, that analyses sequencing data, is used. To make this for every summits file, a while loop was programmed. This loop runs the function findMotifsGenome.pl, that receives the summits file, the path from the results directory to the genome.fa file in genome directory, an output directory name findmotifs_X, being X the sample analysed, a length of the target sequence to determine (8, in this case), and a size, which defines the position around the summits in which to search the binding motifs. 
 
-The more relevant results of this function are two HTML, one with already known biding motifs (known.results.html) and motifs found de novo by homer (homer.results.html)
+The more relevant results of this function are two HTML, one with already known binding motifs (known.results.html) and motifs found de novo by homer (homer.results.html).
 
 ## 7. Case study
 
@@ -223,10 +222,6 @@ A modo de ejemplo orientativo se realizó un análisis sobre el efecto del repre
 	Una vez analizadas, se mapeo las lecturas al genoma de referencia para determinar las regiones que más lecturas acumulan. Para mayor control de la situación, se puede observar en el documento mapping_values.txt generado, el resultado del número de lecturas y el porcentaje de alineamiento de cada muestra. Además, mediante la herramienta de visualización IGV se puede observar zonas concretas del genoma con grandes acumulaciones de lecturas. Por ejemplo, dado que PRR5 afecta al reloj circadiano de arabidopsis thaliana se puede ver como influye en la regulación del gen LHY que es esencial en este reloj. En el caso del control file se observan uniones inespecíficas, mientras que en el file se encontrarán aquellas verdaderas junto a ruido de fondo. 
 
  
-![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
-Este es el código para meter fotos en markdown
+
 	Dado que en esta situación no se puede apreciar qué lecturas pertenecen realmente a la unión de PRR5 con sus respectivos targets o son ruido de fondo. Para eliminar este ruido, se realizó una determinación de picos donde se obtuvieron las lecturas significativamente representativas. Al igual que para el mapeo de lecturas, se pueden observar los sitios de unión significativos con IGV. Siguiendo con el ejemplo del gen LHY, tras la determinación de picos se observa que efectivamente PRR5 posiblemente actúe regulando al gen LHY en el reloj circadiano ya que representa una unión significativa.
- 
-	De esta forma, la determinación de picos permite determinar las posiciones a las que el factor de transcripción a las que se une significativamente. Estas posiciones se conocen como cistroma. Sin embargo, para determinar concretamente qué genes son regulados por este FT, es decir, el reguloma, se realizó un análisis de datos mediante un script de R. Dichos genes fueron analizados según su ontología en términos GO a nivel de procesos biológicos, componentes celulares y funciones biológicas mediante diferentes tipos de gráficos (representados en el R.pdf).
-	Por último, gracias a la herramienta de Homer se consiguieron determinar 242 motivos de unión a PRR5 ya conocidos y 4 motivos de unión a PRR5 de novo. De forma que, en conjunto, toda esta información permite determinar aspectos hasta ahora desconocidos sobre la regulación por PRR5. Concretamente se encontró que PRR5 se unía al ADN a través de un motivo CCT. De esta forma permite la regulación de diversos genes involucrados con el tiempo de floración, la elongación de hipocótilo o respuesta a estrés por frío.
 
