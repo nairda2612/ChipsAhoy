@@ -68,9 +68,9 @@ echo "up1 = $UP2"
 DOWN2=$(grep down2: $PARAMS | awk '{ print $2 }')
 echo "down1 = $DOWN2"
 PVALUEGO=$(grep pvalueCutoffgo: $PARAMS | awk '{ print $2 }')
-echo "PvalueCutoff for GO enrichment analysis = $PVALUEGO"
+echo "pvalueCutoff for GO enrichment analysis = $PVALUEGO"
 PVALUEKEGG=$(grep pvalueCutoffkegg: $PARAMS | awk '{ print $2 }')
-echo "PvalueCutoff for KEGG Pathways enrichment analisys = $PVALUEKEGG"
+echo "pvalueCutoff for KEGG Pathways enrichment analisys = $PVALUEKEGG"
 
 # Reading samples.
 
@@ -403,8 +403,6 @@ SUMMITSBED+=(*summits.bed)
 
 NRESULTS=${#SUMMITSBED[@]}
 
-## AÑADIR $EXP$i$j COMO ULT PARAMETRO PARA NOMBRE DE LAS COSAS
-
 i=1
 while [ $i -le $NRESULTS ]
 do
@@ -462,7 +460,7 @@ echo "                              ▞   ▚                 "
 echo " =====================        ▚   ▞                 "
 echo " | ANALYSIS FINISHED |    — —   —   — —   —   — —   "
 echo " =====================       \ / \ /   \ / \ /      "
-echo "     Hope you found           \   \     \   \       "
+echo "     Hope you find            \   \     \   \       "
 echo "     this pipeline           / \  /\   / \  /\      "
 echo "     useful! :)           — —   ——  — —   ——  — —   "
 echo "                                                    "
