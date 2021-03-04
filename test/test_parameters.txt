@@ -14,6 +14,6 @@ up1: 1000
 down1: 0
 up2: 1000
 down2: 1000
-pvalueCutoff: 0.05
-pvaluekegg: 0.05
+pvalueCutoffgo: 0.05
+pvalueCutoffkegg: 0.05
 paired: 0
