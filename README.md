@@ -38,14 +38,18 @@ University of Seville
 
 ## 1. Summary
 
-RSUUUMEN AL FINAL DECIR 1 HAY 2 FICEROS DE BASH Y 1 DE R
-PERMITE ANALIZAR NUMERO DE MUESTRAS EN PLAN DE TF Q KIERAS PEEERO SIEMPRE Q SE COMPAREN TODOS CON LOS MISMOS (YA SEAN 1 O MAS, CONTROLES
-
-ESTO ES PA FACTTS Y PA ATHALIANA
+This repos has two bash scripts and one R script to analyse ilimited ChIP-seq samples, with the same controls samples, for transcription factors from Arabidopsis thaliana.
 
 ## 2. Dependencies
 
-MI PARTE PAL FINALLL
+R packages needed:
+clusterProlifer
+ChipSeeker
+ggplopt2
+TxDb for Arabidopsis thaliana
+org.tair.db
+
+It is also needed the toolbox HOMER
 
 ## 3. Input
 
@@ -195,8 +199,34 @@ The next step is to define the promoters for narrow peaks and summits, using the
 
 Then, the annotation is converted to data frame. Now, from each data frame, the regulome is determined, simply by extracting the elements whose annotation is “Promoter”. The genes ID of those elements is the regulome, which the pipeline safes on a TXT file.
 
-Once the regulome is determined, 
+Once the regulome is determined, the next step is the Gene Set Enrichment Analysis (GSEA). Two GSEAs are made by this script, one using GO terms, and another one using KEGG Pathways. The functions for both GSEA are similar, enrichGO and enrichKEGG, respectively.
+
+The enrichGO function receives de regulome, the universe defined, an OrgDb object (in this case, that for Arabidopsis thaliana), the ontology terms to analyze (all, in this case), the p-value cutoff and the keyType (in this case, TAIR). 
+
+The enrichKEGG receives the regulome, the universe defined, the organism code (in this case “ath”) and the p-value cutoff.
+
+For both GSEA, bar plots, dot plots and gene-concept networks are generated.
+
+After this, the Rscript is over, and chipsahoy script continues running.
 
 ### h. Binding motifs search
 
+The next step is to determine target sequences for the transcription factors studied, using the summits file. To make this, the toolbox HOMER, that analyses sequencing data, is used. To make this for every summits file, a while loop was programmed. This loop runs the function findMotifsGenome.pl, that receives the summits file, the path from the results directory to the genome.fa file in genome directory, an output directory name findmotifs_X, being X the sample analysed, a length of the target sequence to determine (8, in this case), and a size, which defines the position around the summits in which to search the binding motifs. 
+
+The more relevant results of this function are two HTML, one with already known biding motifs (known.results.html) and motifs found de novo by homer (homer.results.html)
+
 ## 7. Case study
+
+A modo de ejemplo orientativo se realizó un análisis sobre el efecto del represor PRR5 de Arabidopsis thaliana como regulador en la expresión del reloj circadiano. Para situar el contexto, el reloj circadiano en plantas regula una amplia variedad de procesos (por ejemplo, elongación del hipotilo antes del amanecer, o proteínas de respuesta a estrés frío durante la tarde). De manera que permite la expresión de diferentes genes en diferentes momentos del día, regulando su expresión de forma temporal. Recientemente, se ha descubierto una serie de factores de transcripción que regulan directamente la expresión de genes clock-output genes. Concretamente uno de esos factores son la familia de genes pseudo-response regulator (PRR), pero actualmente se desconoce qué genes se ven afectados por su regulación y de qué forma se ven regulados. Por este motivo, en el estudio presentado realizan un análisis para determinar los genes diana de PRR5, una de las principales proteínas de la familia, empleando ChIP-seq.
+
+	Para realizar el análisis se parte una muestra chip y control con lecturas para el cromosoma 1. Además del genoma del cromosoma 1 de Arabidopsis thaliana junto con su anotación. Como se puede observar, el primer paso en el procesamiento de la muestra es realizar un análisis de calidad de cada una de ellas que puede analizarse en el html generado. En su interior se localiza toda la información relevante separada en diferentes apartados (estadísticas básicas, calidad de secuencias por base, puntuaciones de calidad por secuencia, contenido de secuencias por base, contenido de GC por secuencia, etc.). Ambas muestras presentan una buena calidad para poder continuar el análisis.
+	Una vez analizadas, se mapeo las lecturas al genoma de referencia para determinar las regiones que más lecturas acumulan. Para mayor control de la situación, se puede observar en el documento mapping_values.txt generado, el resultado del número de lecturas y el porcentaje de alineamiento de cada muestra. Además, mediante la herramienta de visualización IGV se puede observar zonas concretas del genoma con grandes acumulaciones de lecturas. Por ejemplo, dado que PRR5 afecta al reloj circadiano de arabidopsis thaliana se puede ver como influye en la regulación del gen LHY que es esencial en este reloj. En el caso del control file se observan uniones inespecíficas, mientras que en el file se encontrarán aquellas verdaderas junto a ruido de fondo. 
+
+ 
+![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+Este es el código para meter fotos en markdown
+	Dado que en esta situación no se puede apreciar qué lecturas pertenecen realmente a la unión de PRR5 con sus respectivos targets o son ruido de fondo. Para eliminar este ruido, se realizó una determinación de picos donde se obtuvieron las lecturas significativamente representativas. Al igual que para el mapeo de lecturas, se pueden observar los sitios de unión significativos con IGV. Siguiendo con el ejemplo del gen LHY, tras la determinación de picos se observa que efectivamente PRR5 posiblemente actúe regulando al gen LHY en el reloj circadiano ya que representa una unión significativa.
+ 
+	De esta forma, la determinación de picos permite determinar las posiciones a las que el factor de transcripción a las que se une significativamente. Estas posiciones se conocen como cistroma. Sin embargo, para determinar concretamente qué genes son regulados por este FT, es decir, el reguloma, se realizó un análisis de datos mediante un script de R. Dichos genes fueron analizados según su ontología en términos GO a nivel de procesos biológicos, componentes celulares y funciones biológicas mediante diferentes tipos de gráficos (representados en el R.pdf).
+	Por último, gracias a la herramienta de Homer se consiguieron determinar 242 motivos de unión a PRR5 ya conocidos y 4 motivos de unión a PRR5 de novo. De forma que, en conjunto, toda esta información permite determinar aspectos hasta ahora desconocidos sobre la regulación por PRR5. Concretamente se encontró que PRR5 se unía al ADN a través de un motivo CCT. De esta forma permite la regulación de diversos genes involucrados con el tiempo de floración, la elongación de hipocótilo o respuesta a estrés por frío.
+
