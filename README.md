@@ -3,6 +3,7 @@
 Authors: 
 
 Andrea Fernández Veloso, Adrián Perera Bonaño and Emma Serrano Pérez
+
 University of Seville
 
 ## 1. Summary
@@ -46,9 +47,10 @@ At the end of this README, a case study is presented.
 
 
 ## 2. Dependencies
+
 Tools needed to run the bash scripts: bowtie2, fastqc, samtools , macs2 and homer. These tools can be installed running the following command: sudo apt-get install <tool_name>
 
-Packages needed to run the R script: clusterProlifer, ChipSeeker, ggplot2, TxDb.Athaliana.Biomart.plantsmart28 and org.At.tair.db. All packages, except ggplot2, can be download from Bioconductor, running the following command in R: install(“<package_name>”). For ggplot2, this package can be download from the CRAN, running the following command in R: install.packages(“ggplot2”). 
+Packages needed to run the R script: clusterProlifer, ChipSeeker, ggplot2, TxDb.Athaliana.Biomart.plantsmart28 and org.At.tair.db. All packages, except ggplot2, can be downloaded from Bioconductor, running the following command in R: install(“<package_name>”). For ggplot2, this package can be downloaded from the CRAN, running the following command in R: install.packages(“ggplot2”). 
 
 ## 3. Input
 
@@ -60,11 +62,11 @@ When no parameters are passed to the script, a help message is printed out on th
 
 To run the pipeline, write on the command line:
 
-./chipsahoy /path_to_parameters_file/parameters_file.txt
+./chipsahoy path_to_parameters_file/parameters_file.txt
 
 To store the output of the whole script on a file, including errors, write on the command line: 
 
-./chipsahoy /path_to_parameters_file/parameters_file.txt | tee output_file_name.txt
+./chipsahoy path_to_parameters_file/parameters_file.txt | tee output_file_name.txt
 
 ### a. Parameters read
 
@@ -86,11 +88,11 @@ The parameters file includes the following information:
 
 -path_annotation: The path to the file to be used as reference genome annotation, in GTF format.
 
--number_TF: Number of transcription factors. This pipeline can process more than one transcription factors at once.
+-number_TF: Number of transcription factors. This pipeline can process more than one transcription factor at once.
 
--number_control: Number of control. This pipeline can use more than one sample as a control. Know that every control sample given to the pipeline will be used for every transcription factor.
+-number_control: Number of control samples. This pipeline can use more than one sample as a control. Know that every control sample given to the pipeline will be used for every transcription factor.
 
--path_chip_X: The path to every sample file, in GZ format. Add to the parameters file, as many lines of this parameters as number chip samples (being X the number of the sample). To use more than one replica for any sample, write the path for every replica in the same line, all of them separated by a space.
+-path_chip_X: The path to every sample file, in GZ format. Add to the parameters file, as many lines of these parameters as number chip samples -being X the number of the sample-. To use more than one replica for any sample, write the path for every replica in the same line, all of them separated by a space.
 
 -path_control_X: The path to every control sample. The information given above above for the parameter “Path for every chip sample” is applicable.
 
@@ -100,7 +102,7 @@ The parameters file includes the following information:
 
 -up2: Number of base pairs upstream the summits in which will be defined the promoters and the transcription start site (tss).
 
--down2: Number of bas epairs downstram the summits in which will be defined the promoters and the transcription start site (tss).
+-down2: Number of base pairs downstream the summits in which will be defined the promoters and the transcription start site (tss).
 
 -pvalueCutoffgo: p-valor used in the Gene Ontology Gene Set Enrichment Analysis.
 
@@ -108,9 +110,9 @@ The parameters file includes the following information:
 
 -paired: Write 0 for single-end sequenced samples and 1 for paired-end sequenced samples.
 
-When a parameters file is passed to the pipeline chipsahoy, firstly, the pipeline stores the lines of the parameters file in different variables, and prints out on the screen every the variable for each parameter.
+When a parameters file is passed to the pipeline chipsahoy, firstly, the pipeline stores the lines of the parameters file in different variables, and prints out on the screen every variable for each parameter.
 
-To read de chip and control samples, as their number is changeable, two identical while loops are used. These loops create an array, CHIP or CONTROL, in which the routes for every sample are stored. To break every line read in its different elements (replicas, separated by a space), the array is passed to string, broken, and then every element is stored, separately, in a new array of the same name, CHIP or CONTROL. The lengths of the arrays and string created in every step are printed out on the screen. Thanks to these loops, chipsahoy can process, at once, more than one chip and control samples, each one with more than one replica.
+To read the chip and control samples, as their number is changeable, two identical while loops are used. These loops create an array, CHIP or CONTROL, in which the routes for every sample are stored. To break every line read in its different elements -replicas, separated by a space-, the array is passed to string, broken, and then every element is stored, separately, in a new array of the same name, CHIP or CONTROL. The lengths of the arrays and string created in every step are printed out on the screen. Thanks to these loops, chipsahoy can process, at once, more than one chip and control samples, each one with more than one replica.
 
 ### b. Workspace generation
 
@@ -122,11 +124,11 @@ After that, using their paths, written on the parameters file, the genome and an
 
 To build the index, the pipeline leaves the annotation directory and accesses the genome directory.
 
-Using the function bowtie2-build, which receives the genome.fa and a word to use as suffix of the index files, the pipeline builds an index of the reference genome, and saves it on the genome directory, under the suffix .index.
+Using the function bowtie2-build, which receives the genome.fa and a word to use as a suffix of the index files, the pipeline builds an index of the reference genome, and saves it on the genome directory, under the suffix .index.
 
 ### d. Sample load
 
-To generate the samples directories, first, the pipeline leaves the genome directory and accesses the samples directory. There, two subdirectories, chip and control, are created. Since the number of chips and controls (paired-end sequenced or not) and their replicas can change, two identical while loops, one for chip samples and the other for control samples, access those directories and create as many directories in the chip and control directories, as the numbers of each type of samples, with their replicas, are specified in the parameters file. These directories are named chip_sample_X and control_sample_X, being X the number of the sample. In these same loops, the elements from the arrays CHIP and CONTROL, which are the paths to each sample, are copied, in order, to their respectives directories. 
+To generate the samples directories, first, the pipeline leaves the genome directory and accesses the samples directory. There, two subdirectories, chip and control, are created. Since the number of chips and controls -paired-end sequenced or not- and their replicas can change, two identical while loops, one for chip samples and the other for control samples, access those directories and create as many directories in the chip and control directories, as the numbers of each type of samples, with their replicas, are specified in the parameters file. These directories are named chip_sample_X and control_sample_X, being X the number of the sample. In these same loops, the elements from the arrays CHIP and CONTROL, which are the paths to each sample, are copied, in order, to their respectives directories. 
 
 Every sample file will be copied under the name chip_X_Y.gz or control_Xl_Y.gz, being X the number of the sample, and Y the number of the replica. Also, if the samples were paired-end sequenced, they will be saved under the name chip_X_Y_Z.gz or control_X_Y_Z.gz, being Z = 1 and 2, because of the two files obtained from the paired-end sequencing.
 
@@ -134,13 +136,13 @@ Every sample file will be copied under the name chip_X_Y.gz or control_Xl_Y.gz, 
 
 To process samples, the pipeline leaves the last control sample directory created, then leaves the control directory, and the samples directory, and accesses the results directory.
 
-Then, two identical loops can be found, one for chip samples, and the other for control samples. These loops go through every replica, of every chip or control sample (also takes into account if the sequencing was paired-end or not) and generates the variables SAMPLENAME1 and SAMPLENAME2, with the names of the corresponding sample files, which include information of the number of sample (X), replica (Y) and sequencing method followed (Z), as previously explaind. Then, these loops access the ChipsAhoy directory from the installation directory, to run the bash script “sample_processing” using the command bash. The arguments passed to this script are the following: path to the pertinent chip or control directory from the working directory, the variables SAMPLENAME1, SAMPLENAME2, PAIRED (depending if the samples are paired-end or not), and chip_X_Y or control_X_Y, which will be the new sample name after the reads are mapped to the reference genome. To know more about the reads alignment, go to section 4.e.ii.
+Then, two identical loops can be found, one for chip samples, and the other for control samples. These loops go through every replica, of every chip or control sample -also takes into account if the sequencing was paired-end or not- and generates the variables SAMPLENAME1 and SAMPLENAME2, with the names of the corresponding sample files, which include information of the number of sample (X), replica (Y) and sequencing method followed (Z), as previously explained. Then, these loops access the ChipsAhoy directory from the installation directory, to run the bash script “sample_processing” using the command bash. The arguments passed to this script are the following: path to the pertinent chip or control directory from the working directory, the variables SAMPLENAME1, SAMPLENAME2, PAIRED -depending if the samples are paired-end or not-, and chip_X_Y or control_X_Y, which will be the new sample name after the reads are mapped to the reference genome. To know more about the reads alignment, go to section 4.e.ii.
 
-In the sample processing script, a loop to make de quality control and reads alignment can be found. This loop takes into account if the samples are paired-end or not. 
+In the sample processing script, a loop to make the quality control and reads alignment can be found. This loop takes into account if the samples are paired-end or not. 
 
 #### i. Quality control
 
-Once the pipeline runs the sample_processing bash script, a quality control is made for the sample passed to the script, using the function fastqc, which receives the name of the sample (SAMPLE1) or samples (if their paired-end, SAMPLE1 and SAMPLE2) . As the last folder accessed was the pertinent sample directory, for each sample, the quality control results will be saved in that same directory.
+Once the pipeline runs the sample_processing bash script, a quality control is made for the sample passed to the script, using the function fastqc, which receives the name of the sample (SAMPLE1) or samples -if their paired-end, SAMPLE1 and SAMPLE2- . As the last folder accessed was the pertinent sample directory, for each sample, the quality control results will be saved in that same directory. The quality control results can be viewed opening the HTML file created.
 
 #### ii. Reads alignment
 
@@ -152,9 +154,9 @@ The next step is to align the reads to the index of the reference genome, previo
 
 -S   output name of the SAM file generated. This name corresponds to the last parameter passed to the while loop that runs the sample_processing bash script. To remember this, go to section 2e.
 
-During the SAM file generation, the code will be printed on a mapping file on TXT format, and a loading bar will be printed out on the screen to let the user know that the SAM is being created. The loading bar adds a lightning symbol per second that the SAM file is being created.
+During the SAM file generation, the code will be printed on a mapping file in TXT format, and a loading bar will be printed out on the screen to let the user know that the SAM is being created. The loading bar adds a lightning symbol per second that the SAM file is being created.
 
-After the SAM file is created, since it is a very heavy file, it is convert to a BAM file under the same name, given by the variable SAMPLENAME, as explained before. To make this conversion, the function samtools sort is used. The parameters passed to this function are the output BAM file name (SAMPLENAME.bam) and the SAM file. Then, the SAM file is removed.
+After the SAM file is created, since it is a very heavy file, it is converted to a BAM file under the same name, given by the variable SAMPLENAME, as explained before. To make this conversion, the function samtools sort is used. The parameters passed to this function are the output BAM file name (SAMPLENAME.bam) and the SAM file. Then, the SAM file is removed.
 
 Also, to ease the access to the mapping information to the user, from the mapping file created previously, the lines that correspond to the number of reads and the overall alignment percentage, are saved on a new TXT file created on the results directory, the mapping values file. This way, when all samples are processed, the mapping values file will have the mapping information for every sample. The mapping file is removed after the relevant information is passed to the mapping values file.
 
@@ -166,7 +168,7 @@ We recommend that the user visualises the alignment made on an interactive tool,
 
 Even though the reads are aligned on the genome, the user cannot know, only with that information, which are the possible target genes for the transcription factors analysed. To check if the result of the mapping is significant, a statistical analysis is made. Using a contrast of hypothesis, the error probability can be determined. 
 
-To call peaks, a sliding window goes through the genome, counting reads on the window defined, for chips and control samples. Then, the reads of each pair of samples are compared, and the statistic test previously explained, determines a fold-change and a p-value. This values represent the difference in the number of reads for the chip and control sample, and how significant is that difference, respectively. It is important to know that, since, this process is a multiple testing, a correction of the p-value, called q-value or FDR, needs to be made. Therefore, peaks are regions in which there is a significant difference of reads between the chip and the control samples.The combination of all the positions where the transcription factor binds significantly is known as the cistrome of a transcription factor, in a given condition.
+To call peaks, a sliding window goes through the genome, counting reads on the window defined, for chips and control samples. Then, the reads of each pair of samples are compared, and the statistical test previously explained, determines a fold-change and a p-value. These values represent the difference in the number of reads for the chip and control sample, and how significant is that difference, respectively. It is important to know that, since this process is a multiple testing, a correction of the p-value, called q-value or FDR, needs to be made. Therefore, peaks are regions in which there is a significant difference of reads between the chip and the control samples.
 
 To guarantee that this code is run for every chip and control samples, a double while loop that goes through every chip and every control sample was configured. To call peaks, the function macs2 with the command callpeak is used. The arguments passed to this function are the following:
 
@@ -180,7 +182,7 @@ To guarantee that this code is run for every chip and control samples, a double 
 
 -- outdir to specify the output directory, which is still the results directory.
 
-After the peaks calling, the output files can be found on the results directory. Of all the files created, the ones of special interest in this work are the .narrowPeak and .bed files, with the significant narrow peaks and summits, respectively. 
+After the peaks calling, the output files can be found on the results directory. Of all the files created, the ones of special interest in this work are the .narrowPeak and .bed files, with the significant narrow peaks and summits, respectively.
 
 We recommend that the user visualises on an interactive tool, like IGV, the result of the alignment, and also the peaks called.
 
@@ -188,21 +190,21 @@ We recommend that the user visualises on an interactive tool, like IGV, the resu
 
 After the peaks are called, for the next steps the pipeline needs to run an R script for every narrowPeak and bed file. Before that, these files are stored in two arrays, NARROWPEAK and SUMMITSBED, respectively.
 
-This way, a while loop goes through every file with results, narrow peaks and summits, and runs de R script created to determine the regulome and make the Gene Set Enrichment Analysis. The script if run with the command Rscript, and the arguments passed, in addition to the pair of peaks file, the parameters defined in the parameters text up1, down1, up2, down2, pvalueCutoffgo, pvalueCutoffkegg an identification for every sample, which is  experiment_name_X_Y, being X and Y the number of chip and control samples, respectively, that were compared.
+This way, a while loop goes through every file with results, narrow peaks and summits, and runs the R script created to determine the regulome and make the Gene Set Enrichment Analysis. The script if run with the command Rscript, and the arguments passed, in addition to the pair of peaks file, the parameters defined in the parameters text up1, down1, up2, down2, pvalueCutoffgo, pvalueCutoffkegg an identification for every sample, which is  experiment_name_X_Y, being X and Y the number of chip and control samples, respectively, that were compared.
 
 The first thing that the R script, called peaks_script.R does, is to store the arguments passed on the bash script on variables. Then, the script loads the necessary packages for the analysis. To know the packages needed, go to section 2. 
 
-Then, the script gets the genetic information from the organism, in this case Arabidopsis thaliana, and gets de universe, in this case, the genes id of the whole organism. After this, the script reads the different files, and, for the narrow peaks, plots the peak coverage.
+Then, the script gets the genetic information from the organism, in this case Arabidopsis thaliana, and gets the universe, in this case, the genes id of the whole organism. After this, the script reads the different files, and, for the narrow peaks, plots the peak coverage.
 
 The next step is to define the promoters for narrow peaks and summits, using the base pair up and downstream given in the parameters file, and to annotate those peaks. A plot of the annotation is generated for each peaks file.
 
-Then, the annotation is converted to data frame. Now, from each data frame, the regulome is determined, simply by extracting the elements whose annotation is “Promoter”. The genes ID of those elements is the regulome, which the pipeline safes on a TXT file.
+Then, the annotation is converted to a data frame. Now, from each data frame, the regulome is determined, simply by extracting the elements whose annotation is “Promoter”. The genes ID of those elements is the regulome, which the pipeline safes on a TXT file.
 
 Once the regulome is determined, the next step is the Gene Set Enrichment Analysis (GSEA). Two GSEAs are made by this script, one using GO terms, and another one using KEGG Pathways. The functions for both GSEA are similar, enrichGO and enrichKEGG, respectively.
 
-The enrichGO function receives de regulome, the universe defined, an OrgDb object (in this case, that for Arabidopsis thaliana), the ontology terms to analyse (all, in this case), the p-value cutoff and the keyType (in this case, TAIR). 
+The enrichGO function receives the regulome, the universe defined, an OrgDb object -in this case, that for Arabidopsis thaliana-, the ontology terms to analyse -all, in this case-, the p-value cutoff and the keyType -in this case, TAIR-. 
 
-The enrichKEGG receives the regulome, the universe defined, the organism code (in this case “ath”) and the p-value cutoff.
+The enrichKEGG receives the regulome, the universe defined, the organism code -in this case “ath”- and the p-value cutoff.
 
 For both GSEA, bar plots, dot plots and gene-concept networks are generated.
 
@@ -210,16 +212,26 @@ After this, the Rscript is over, and chipsahoy script continues running.
 
 ### h. Binding motifs search
 
-The next step is to determine target sequences for the transcription factors studied, using the summits file. To make this, the toolbox HOMER, that analyses sequencing data, is used. To make this for every summits file, a while loop was programmed. This loop runs the function findMotifsGenome.pl, that receives the summits file, the path from the results directory to the genome.fa file in genome directory, an output directory name findmotifs_X, being X the sample analysed, a length of the target sequence to determine (8, in this case), and a size, which defines the position around the summits in which to search the binding motifs. 
+The next step is to determine target sequences for the transcription factors studied, using the summits file. To make this, the toolbox HOMER, that analyses sequencing data, is used. To make this for every summits file, a while loop was programmed. This loop runs the function findMotifsGenome.pl, that receives the summits file, the path from the results directory to the genome.fa file in genome directory, an output directory name findmotifs_X, being X the sample analysed, a length of the target sequence to determine -8, in this case-, and a size, which defines the position around the summits in which to search the binding motifs. 
 
 The more relevant results of this function are two HTML, one with already known binding motifs (known.results.html) and motifs found de novo by homer (homer.results.html).
 
 ## 7. Case study
 
-A modo de ejemplo orientativo se realizó un análisis sobre el efecto del represor PRR5 de Arabidopsis thaliana como regulador en la expresión del reloj circadiano. Para situar el contexto, el reloj circadiano en plantas regula una amplia variedad de procesos (por ejemplo, elongación del hipotilo antes del amanecer, o proteínas de respuesta a estrés frío durante la tarde). De manera que permite la expresión de diferentes genes en diferentes momentos del día, regulando su expresión de forma temporal. Recientemente, se ha descubierto una serie de factores de transcripción que regulan directamente la expresión de genes clock-output genes. Concretamente uno de esos factores son la familia de genes pseudo-response regulator (PRR), pero actualmente se desconoce qué genes se ven afectados por su regulación y de qué forma se ven regulados. Por este motivo, en el estudio presentado realizan un análisis para determinar los genes diana de PRR5, una de las principales proteínas de la familia, empleando ChIP-seq.
+As an example, the repressor effect of Arabidopsis thaliana PRR5 protein, as a regulating factor of circadian clock expression, is studied. Circadian clock of plants regulates a wide range of processes, such as hypocotyl elongation before sunrise, or cold-stress response proteins. This way, the circadian clock allows the expression of different genes in different day moments, regulating their expression temporarily. 
 
-Para realizar el análisis se parte una muestra chip y control con lecturas para el cromosoma 1. Además del genoma del cromosoma 1 de Arabidopsis thaliana junto con su anotación. Como se puede observar, el primer paso en el procesamiento de la muestra es realizar un análisis de calidad de cada una de ellas que puede analizarse en el html generado. En su interior se localiza toda la información relevante separada en diferentes apartados (estadísticas básicas, calidad de secuencias por base, puntuaciones de calidad por secuencia, contenido de secuencias por base, contenido de GC por secuencia, etc.). Ambas muestras presentan una buena calidad para poder continuar el análisis.
+Recently, some transcription factors that directly regulate clock-output genes have been discovered. One of these transcription factors is the family of genes called pseudo-response regulator (PRR). However, it remains still unknown which genes are regulated by this family of genes, and how are they regulated. Hence, in the present study, a ChIP-seq analysis to determine one of the main proteins of de PRR family target genes is carried out.
 
-Una vez analizadas, se mapeo las lecturas al genoma de referencia para determinar las regiones que más lecturas acumulan. Para mayor control de la situación, se puede observar en el documento mapping_values.txt generado, el resultado del número de lecturas y el porcentaje de alineamiento de cada muestra. Además, mediante la herramienta de visualización IGV se puede observar zonas concretas del genoma con grandes acumulaciones de lecturas. Por ejemplo, dado que PRR5 afecta al reloj circadiano de arabidopsis thaliana se puede ver como influye en la regulación del gen LHY que es esencial en este reloj. En el caso del control file se observan uniones inespecíficas, mientras que en el file se encontrarán aquellas verdaderas junto a ruido de fondo. 
+The samples to process are a chip and a control sample, with reads for the chromosome 1 of Arabidopsis thaliana. The chromosome 1 FASTA file, and the chromosome 1 GTF file, reference genome and annotation, respectively, are also given. 
 
-Dado que en esta situación no se puede apreciar qué lecturas pertenecen realmente a la unión de PRR5 con sus respectivos targets o son ruido de fondo. Para eliminar este ruido, se realizó una determinación de picos donde se obtuvieron las lecturas significativamente representativas. Al igual que para el mapeo de lecturas, se pueden observar los sitios de unión significativos con IGV. Siguiendo con el ejemplo del gen LHY, tras la determinación de picos se observa que efectivamente PRR5 posiblemente actúe regulando al gen LHY en el reloj circadiano ya que representa una unión significativa.
+As previously explained, the first step on the sample processing, after generating workspace and building index, is the sample quality control. On the HTML of the quality control, different sections can be found: basic statistics, per base sequence quality, per base quality scores, per sequence GC content, etc. For both samples, the quality control analysis results are good. This is really easy to know: generally, in the HTML, if a green check mark appears in the different sections, that means the quality analysis went okay.
+
+After the quality analysis, the reads mapping is done. A summary of the results of the mapping can be found on the mapping_value.txt, found on the results samples. In this case, the number of reads and overall alignment of the chip sample was 1561512 and 99.96%, respectively. For the control sample, those values were 235150 and 99.50%. As mentioned before, the alignment can be viewed on IGV. As PRR5 is related to the circadian clock, it would not be unusual to find that one of its targets is LHY -locus: AT1G01060-. When bam, and bam.bai files for chip and control samples are loaded in IGV, on the region of the mentioned locus, unspecific binding is found for control file, while for the chip file, can be found real binding and background noise.
+
+Even though the mapping can be viewed, with this visualisation it cannot be distinguished which reads belong to real PRR5 binding from those that are background noise. To remove the background, and retain significant reads, the peaks calling is carried out. The results of the peaks calling can also be viewed on IGV. Again, a peak can be found on the LHY locus. This way, it can be concluded that PRR5 probably regulates LHY gene.
+
+These positions where the transcription factor binds significantly, on a condition given, are known as the cistrome. However, to determine which genes are regulated by PRR5, its regulome, the files from the alignment are run on the R script mentioned before. Once the regulome is determined, this can be used to make a GSEA, and identify relevant GO terms or KEGG Pathways. Some of the enrichments are related to the karrikin metabolism, or the photosynthesis.
+
+Finally, using the toolbox HOMER, 242 known binding motifs were identified as PRR5 binding motifs, in addition to 4 PRR5 binding motifs found de novo. One of these binding motifs is a CCT motif.
+
+With all this information, it becomes clear that PRR5 regulates different genes that participate in processes related to the circadian clock, like flowering, hypocotyl elongation, and even mediating cold-stress response.
