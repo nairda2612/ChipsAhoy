@@ -1,6 +1,6 @@
 installation_directory: /home/andfervel/github_repos
 working_directory: /home/andfervel/tmp
-experiment_name: prr5_aver
+experiment_name: prr5
 number_rep_tf: 1
 number_rep_control: 1
 path_genome: /home/andfervel/prr5/chromosome1.fa
